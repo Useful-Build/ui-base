@@ -1,0 +1,568 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "ui-base",
+  "homepage": "https://github.com/wasimjalali/ui-base",
+  "items": [
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "Utils",
+      "description": "cn(), with tailwind-merge taught the token file's text, weight, shadow and tracking scales.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "files": [
+        {
+          "path": "registry/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "@lib/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "icon",
+      "type": "registry:ui",
+      "title": "Icon",
+      "description": "The icon seam: Material-style names mapped to lucide-react. Swap this one file to change an app's icon set.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "Avatar, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/avatar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "Badge, restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Button, restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "Card, restyled with the role tokens.",
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Checkbox, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "Command, restyled with the role tokens.",
+      "dependencies": [
+        "cmdk"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/dialog",
+        "wasimjalali/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/command.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Dialog, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/button",
+        "wasimjalali/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "Dropdown Menu, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Input, restyled with the role tokens.",
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "Label, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Popover, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Select, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "Separator, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "Sheet, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/sheet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "Skeleton, restyled with the role tokens.",
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "Switch, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/switch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "Textarea, restyled with the role tokens.",
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/textarea.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Toggle, restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/toggle.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle Group",
+      "description": "Toggle Group, restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/toggle"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/toggle-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "Tooltip, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tokens",
+      "type": "registry:item",
+      "title": "Tokens (Vite)",
+      "description": "The one token file, written whole over src/index.css.",
+      "dependencies": [
+        "tw-animate-css",
+        "@fontsource-variable/geist",
+        "@fontsource-variable/geist-mono"
+      ],
+      "files": [
+        {
+          "path": "registry/styles/tokens.css",
+          "type": "registry:file",
+          "target": "~/src/index.css"
+        }
+      ]
+    },
+    {
+      "name": "tokens-next",
+      "type": "registry:item",
+      "title": "Tokens (Next.js)",
+      "description": "The one token file, written whole over app/globals.css.",
+      "dependencies": [
+        "tw-animate-css",
+        "@fontsource-variable/geist",
+        "@fontsource-variable/geist-mono"
+      ],
+      "files": [
+        {
+          "path": "registry/styles/tokens.css",
+          "type": "registry:file",
+          "target": "~/app/globals.css"
+        }
+      ]
+    },
+    {
+      "name": "token-check",
+      "type": "registry:item",
+      "title": "Token check",
+      "description": "Fails on any color literal outside the token file.",
+      "files": [
+        {
+          "path": "registry/scripts/check-tokens.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/check-tokens.mjs"
+        }
+      ]
+    },
+    {
+      "name": "guide",
+      "type": "registry:item",
+      "title": "Design system guide",
+      "description": "DESIGN_SYSTEM.md: layers, tokens, scales, components and how to restyle.",
+      "files": [
+        {
+          "path": "registry/docs/DESIGN_SYSTEM.md",
+          "type": "registry:file",
+          "target": "~/DESIGN_SYSTEM.md"
+        }
+      ]
+    },
+    {
+      "name": "regression-suite",
+      "type": "registry:item",
+      "title": "UI regression suite",
+      "description": "Playwright visual and axe checks for every route, light and dark, desktop and phone.",
+      "devDependencies": [
+        "@playwright/test",
+        "@axe-core/playwright"
+      ],
+      "files": [
+        {
+          "path": "registry/regression/playwright.config.ts",
+          "type": "registry:file",
+          "target": "~/playwright.config.ts"
+        },
+        {
+          "path": "registry/regression/e2e/ui/routes.ts",
+          "type": "registry:file",
+          "target": "~/e2e/ui/routes.ts"
+        },
+        {
+          "path": "registry/regression/e2e/ui/visual.spec.ts",
+          "type": "registry:file",
+          "target": "~/e2e/ui/visual.spec.ts"
+        },
+        {
+          "path": "registry/regression/e2e/ui/a11y.spec.ts",
+          "type": "registry:file",
+          "target": "~/e2e/ui/a11y.spec.ts"
+        }
+      ],
+      "docs": "UI suite added. Install the browser once with `npx playwright install chromium`, list your routes in e2e/ui/routes.ts, then run `npx playwright test`. The first run writes the baselines; commit them."
+    },
+    {
+      "name": "base",
+      "type": "registry:item",
+      "title": "UI base (Vite)",
+      "description": "Everything for a Vite app: tokens, components, icon seam, utils, token check and the guide.",
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/icon",
+        "wasimjalali/ui-base/avatar",
+        "wasimjalali/ui-base/badge",
+        "wasimjalali/ui-base/button",
+        "wasimjalali/ui-base/card",
+        "wasimjalali/ui-base/checkbox",
+        "wasimjalali/ui-base/command",
+        "wasimjalali/ui-base/dialog",
+        "wasimjalali/ui-base/dropdown-menu",
+        "wasimjalali/ui-base/input",
+        "wasimjalali/ui-base/label",
+        "wasimjalali/ui-base/popover",
+        "wasimjalali/ui-base/select",
+        "wasimjalali/ui-base/separator",
+        "wasimjalali/ui-base/sheet",
+        "wasimjalali/ui-base/skeleton",
+        "wasimjalali/ui-base/switch",
+        "wasimjalali/ui-base/textarea",
+        "wasimjalali/ui-base/toggle",
+        "wasimjalali/ui-base/toggle-group",
+        "wasimjalali/ui-base/tooltip",
+        "wasimjalali/ui-base/tokens",
+        "wasimjalali/ui-base/token-check",
+        "wasimjalali/ui-base/guide"
+      ],
+      "files": [],
+      "docs": "UI base installed. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs src\". Read DESIGN_SYSTEM.md before building screens. For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite"
+    },
+    {
+      "name": "base-next",
+      "type": "registry:item",
+      "title": "UI base (Next.js)",
+      "description": "Everything for a Next.js app: tokens, components, icon seam, utils, token check and the guide.",
+      "registryDependencies": [
+        "wasimjalali/ui-base/utils",
+        "wasimjalali/ui-base/icon",
+        "wasimjalali/ui-base/avatar",
+        "wasimjalali/ui-base/badge",
+        "wasimjalali/ui-base/button",
+        "wasimjalali/ui-base/card",
+        "wasimjalali/ui-base/checkbox",
+        "wasimjalali/ui-base/command",
+        "wasimjalali/ui-base/dialog",
+        "wasimjalali/ui-base/dropdown-menu",
+        "wasimjalali/ui-base/input",
+        "wasimjalali/ui-base/label",
+        "wasimjalali/ui-base/popover",
+        "wasimjalali/ui-base/select",
+        "wasimjalali/ui-base/separator",
+        "wasimjalali/ui-base/sheet",
+        "wasimjalali/ui-base/skeleton",
+        "wasimjalali/ui-base/switch",
+        "wasimjalali/ui-base/textarea",
+        "wasimjalali/ui-base/toggle",
+        "wasimjalali/ui-base/toggle-group",
+        "wasimjalali/ui-base/tooltip",
+        "wasimjalali/ui-base/tokens-next",
+        "wasimjalali/ui-base/token-check",
+        "wasimjalali/ui-base/guide"
+      ],
+      "files": [],
+      "docs": "UI base installed. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs app components lib\". Read DESIGN_SYSTEM.md before building screens. For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite"
+    }
+  ]
+}
