@@ -69,7 +69,7 @@ To add another shadcn component: `npx shadcn@latest add <name>`. Then swap its l
 
 Components never import an icon library. They render `<Icon name="check" />` from `components/ui/icon.tsx`, with the same props everywhere: `name`, `size`, `weight`, `fill`, `style` and `className`. Names are Material-style (`search`, `close`, `check`, `unfold_more`, `expand_less`, `expand_more`, `chevron_right`).
 
-That file is the icon seam. The base maps the names to lucide-react, with `weight` turned into a stroke width (300 is 1.5, 400 is 2, 500 is 2.25). An app with its own icon set (Material Symbols, say) replaces only that file and keeps the props, so every component stays identical across apps. An unknown name throws, so a missing icon fails loud instead of rendering nothing.
+That file is the icon seam. The base maps the names to lucide-react, with `weight` turned into a stroke width (300 is 1.5, 400 is 2, 500 is 2.25). An app with its own icon set (Material Symbols, say) replaces only that file and keeps the props, so every component stays identical across apps. An unknown name throws, so a missing icon fails loud instead of rendering nothing. The file is app-owned: `update` never overwrites it.
 
 ## Restyling an app
 

@@ -71,7 +71,7 @@ npx shadcn@4.23.0 add wasimjalali/ui-base/update-next -y --overwrite            
 npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite   # if the app has the suite
 ```
 
-They rewrite the base-owned files and leave the app CSS file and `routes.ts` alone. Component variants an app changed are rewritten too, so review the diff before committing. Pin a release with a tag or a full commit SHA: `wasimjalali/ui-base/update#v1.0.0`. The `base`, `update` and suite items (and their Next.js twins) carry all their files themselves, so a pinned ref installs exactly that version. Single component items depend on `utils`, `icon` and so on through `registryDependencies`, and the CLI resolves those from `main` whatever ref you pin (refs are not passed on to dependencies).
+They rewrite the base-owned files and leave the app-owned ones alone: the app CSS file, `components/ui/icon.tsx` and `routes.ts`. If a release adds an icon name, its notes list it; add it to your `icon.tsx` (an unknown name throws, so a gap fails loud). Component variants an app changed are rewritten too, so review the diff before committing. Pin a release with a tag or a full commit SHA: `wasimjalali/ui-base/update#v1.0.0`. The `base`, `update` and suite items (and their Next.js twins) carry all their files themselves, so a pinned ref installs exactly that version. Single component items depend on `utils`, `icon` and so on through `registryDependencies`, and the CLI resolves those from `main` whatever ref you pin (refs are not passed on to dependencies).
 
 ## Restyling an app
 

@@ -97,10 +97,10 @@ copy_shots() {
 app() {
   local kind="$1" item update_item app_css starter ui_css page check_dirs
   if [ "$kind" = vite ]; then
-    item=base; update_item=update; app_css=src/index.css; starter=app.css; ui_css=src/ui-base.css
+    item=base; update_item=update; app_css=src/index.css; starter=app.css; ui_css=src/ui-base.css; icon_tsx=src/components/ui/icon.tsx
     page=src/App.tsx; check_dirs="src"
   else
-    item=base-next; update_item=update-next; app_css=app/globals.css; starter=app-next.css; ui_css=app/ui-base.css
+    item=base-next; update_item=update-next; app_css=app/globals.css; starter=app-next.css; ui_css=app/ui-base.css; icon_tsx=components/ui/icon.tsx
     page=app/page.tsx; check_dirs="app components lib"
   fi
   local dir="$WORK/$kind-app" out="$VERIFY/$kind"
@@ -171,6 +171,9 @@ app() {
 
   cp "$app_css" "$WORK/app-css.keep"
   cp e2e/ui/routes.ts "$WORK/routes.keep"
+  # The icon seam is app-owned: an app that swapped its icon set must keep it.
+  echo '// app icon set' >> "$icon_tsx"
+  cp "$icon_tsx" "$WORK/icon.keep"
   # Make base-owned files stale, so the update has to rewrite them.
   echo '/* stale */' >> "$ui_css"
   echo '// stale' >> e2e/ui/visual.spec.ts
@@ -178,6 +181,7 @@ app() {
   must "$kind-add-regression-suite-update" pass "${SHADCN[@]}" add "$REPO/regression-suite-update#$REF" -y --overwrite
   step "$kind-update-kept-app-css" pass cmp "$WORK/app-css.keep" "$app_css"
   step "$kind-update-kept-routes" pass cmp "$WORK/routes.keep" e2e/ui/routes.ts
+  step "$kind-update-kept-icon" pass cmp "$WORK/icon.keep" "$icon_tsx"
   step "$kind-update-rewrote-ui-base-css" pass cmp "$ROOT/registry/styles/ui-base.css" "$ui_css"
   step "$kind-update-rewrote-suite" pass cmp "$ROOT/registry/regression/e2e/ui/visual.spec.ts" e2e/ui/visual.spec.ts
 

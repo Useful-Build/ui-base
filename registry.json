@@ -801,10 +801,6 @@
           "target": "@lib/utils.ts"
         },
         {
-          "path": "registry/ui/icon.tsx",
-          "type": "registry:ui"
-        },
-        {
           "path": "registry/ui/avatar.tsx",
           "type": "registry:ui"
         },
@@ -900,7 +896,7 @@
           "target": "~/src/ui-base.css"
         }
       ],
-      "docs": "UI base updated. src/index.css and its overrides were left alone. Review the diff before committing."
+      "docs": "UI base updated. src/index.css and its overrides and components/ui/icon.tsx were left alone. Review the diff before committing."
     },
     {
       "name": "update-next",
@@ -921,10 +917,6 @@
           "path": "registry/lib/utils.ts",
           "type": "registry:lib",
           "target": "@lib/utils.ts"
-        },
-        {
-          "path": "registry/ui/icon.tsx",
-          "type": "registry:ui"
         },
         {
           "path": "registry/ui/avatar.tsx",
@@ -1022,7 +1014,7 @@
           "target": "~/app/ui-base.css"
         }
       ],
-      "docs": "UI base updated. app/globals.css and its overrides were left alone. Review the diff before committing."
+      "docs": "UI base updated. app/globals.css and its overrides and components/ui/icon.tsx were left alone. Review the diff before committing."
     }
   ]
 }
