@@ -1,0 +1,3 @@
+#bed, #cafe .x, #add:hover, [data-tone=red] .red { color: var(--foreground); }
+.y { border: 1px solid var(--border); background: transparent; color: currentColor; fill: inherit; }
+.z { background: url(/img/red.png); font-family: "Red Hat", sans-serif; content: "red"; }

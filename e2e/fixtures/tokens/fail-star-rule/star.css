@@ -1,0 +1,4 @@
+/*
+ * A rule that starts with a star is code, not a comment line.
+ */
+* { color: #f00 }

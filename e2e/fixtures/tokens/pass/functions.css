@@ -1,0 +1,15 @@
+.a {
+  background: color-mix(in oklab, var(--brand) 50%, transparent);
+  color: color-mix(in oklch, var(--a) 40%, var(--b) 60%);
+  outline-color: rgb(from var(--brand) r g b / 50%);
+  fill: hsl(from var(--primary) h s l / 0.25);
+  stroke: rgb(var(--a, var(--b)) / 50%);
+  border-color: rgb(from var(--a) r g b / alpha);
+  caret-color: color(from var(--a) srgb r g b / 0.5);
+  column-rule-color: rgb(var(--a) / var(--b));
+  text-decoration-color: color-mix(
+    in oklab,
+    var(--brand) 30%,
+    transparent
+  );
+}

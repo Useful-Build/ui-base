@@ -1,0 +1,6 @@
+export const a = "shadow-[0_0_0_1px_rgb(0_0_0)]"
+export const b = "shadow-[0_0_0_1px_rgba(0,0,0,0.5)]"
+export const c = "shadow-[0_1px_oklch(0.5_0.1_20)]"
+export const d = "shadow-[0_1px_hsl(0_0%_0%)]"
+export const e = "shadow-[0_1px_RGB(0_0_0)]"
+export const f = "shadow-[0_1px_Rgb(0_0_0)]"

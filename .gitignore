@@ -1,0 +1,7 @@
+node_modules/
+verify/
+.claude/worktrees/
+test-results/
+playwright-report/
+e2e/.work/
+.DS_Store

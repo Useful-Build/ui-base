@@ -1,0 +1,3 @@
+.a { color: rgb(10% 20% 30% / var(--a)) }
+.b { color: color(srgb 100% 0% 0% / var(--a)) }
+.c { color: hsl(var(--h) 80% 40%) }

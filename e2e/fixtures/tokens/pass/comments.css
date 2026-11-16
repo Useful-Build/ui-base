@@ -1,0 +1,14 @@
+/*
+ * Prose in a multi-line block comment is not code: use color: red for errors,
+ * never #ff0000 or rgb(255 0 0), and
+   a line that starts with no star: background: black; #123456
+ */
+.a { color: var(--foreground); } /* #fff */ /* rgb(0 0 0) */ .b { color: var(--brand); }
+/* one */ /* two #abcdef */
+.c {
+  /* border-color: white; */
+  background: color-mix(in oklab, var(--brand) 50%, transparent);
+  outline-color: rgb(from var(--brand) r g b / 50%);
+  fill: hsl(from var(--primary) h s l / 0.25);
+  color: color-mix(in oklab, var(--brand) 40%, transparent);
+}
