@@ -1,0 +1,12 @@
+:root {
+  --card: #ffffff;
+}
+.dark {
+  --card: #111111;
+}
+@theme inline {
+  --color-card: var(--card);
+}
+@theme static {
+  --font-sans: "Geist", sans-serif;
+}

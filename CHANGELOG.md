@@ -8,9 +8,10 @@ Read the entry for a release before you run `update`, `update-next` or `regressi
 
 Rules every release follows:
 
-- **Tokens are never renamed outright.** A release adds the new name and keeps the old one in `ui-base.css` as an alias (`--old: var(--new);`) for at least one release, listed here as deprecated. An app's overrides of the old name keep working until it moves over, and `lint:tokens` flags an override once the old name is gone.
+- **Tokens are never renamed outright.** A release adds the new name as an alias of the old one (`--new: var(--old);`) in both `:root` and `.dark` of `ui-base.css`, keeps the old name's values for at least one release and lists it here as deprecated. Components read the new name, which follows the old one, so an app's override of either name reaches them. `lint:tokens` flags an override of the old name once it's gone.
 - **The app CSS starter is frozen.** Every app owns its copy of `src/index.css` or `app/globals.css`, so a release never changes the starter. Anything new (a token, a base style, a helper) ships in `ui-base.css`.
 - **App-owned files never ship in an update item.** Anything an app is told to edit is installed once by `base`, `base-next` or `regression-suite`.
+- **Newly adopted components are named here.** A component an app added from upstream shadcn is the app's own until ui-base adopts it. The release that adopts one names it, since the update then rewrites the app's copy: review that file's diff.
 
 ## v1.0.0 (2026-11-16)
 

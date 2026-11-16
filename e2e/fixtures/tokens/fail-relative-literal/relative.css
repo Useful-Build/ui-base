@@ -1,1 +1,1 @@
-.w { color: rgb(from red r g b / 50%) }
+.w { color: rgb(from var(--brand) 255 g b) }

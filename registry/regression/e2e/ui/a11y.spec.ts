@@ -3,14 +3,13 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import type { NodeResult, Result } from 'axe-core'
-import { ROUTES } from './routes'
-import { openRoute, THEMES } from './support'
+import * as routes from './routes'
+import { openRoute, THEMES, type Exclusion } from './support'
 
-// Known issues that come from a library or need a design call. Each one skips a single rule on nodes inside its
-// selector (el.closest(selector)), only while the `when` element is on the page if it names one, and only when every
-// node axe blames for it matches `related` if it names one. The rule still runs everywhere else. Keep each entry as
-// narrow as it can be.
-type Exclusion = { rule: string; selector: string; why: string; when?: string; related?: string }
+// Known issues that come from a library or need a design call, here for every app and, from the app's routes.ts,
+// AXE_EXCLUDE for its own (optional there). Each one skips a single rule; see Exclusion in support.ts. Keep each entry
+// as narrow as it can be.
+const app: { ROUTES: string[]; AXE_EXCLUDE?: Exclusion[] } = routes
 const EXCLUDED: Exclusion[] = [
   // An open Radix Select sets aria-hidden on the rest of the page and traps focus in its list, so the hidden controls
   // can't be reached, but axe still counts them as focusable. Radix behaviour, and only while a select list is open.
@@ -18,6 +17,7 @@ const EXCLUDED: Exclusion[] = [
   // cmdk renders CommandSeparator (role=separator) inside its role=listbox, which axe doesn't allow there. Skipped only
   // when separators are the sole children axe objects to; a missing option or any other stray child still fails.
   { rule: 'aria-required-children', selector: '[cmdk-list]', related: '[role="separator"]', why: 'cmdk puts its separator inside the listbox' },
+  ...(app.AXE_EXCLUDE ?? []),
 ]
 
 // The nodes a failed check points at (for aria-required-children, the children that aren't allowed).
@@ -40,7 +40,7 @@ async function remaining(page: Page, v: Result) {
 }
 
 for (const theme of THEMES) {
-  for (const route of ROUTES) {
+  for (const route of app.ROUTES) {
     test(`${theme} · ${route}`, async ({ page }) => {
       await openRoute(page, route, theme)
       const { violations } = await new AxeBuilder({ page })

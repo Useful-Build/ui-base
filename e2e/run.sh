@@ -184,6 +184,11 @@ app() {
   [ "$(grep -cE -- "--(primary|brand): #" "$app_css")" = 4 ] || abort "$kind-override-brand" "override edit did not apply to $app_css"
   perl -0pi -e "s#: \['/'\]#: ['/', '/?open=dialog']#" e2e/ui/routes.ts
   grep -qF "['/', '/?open=dialog']" e2e/ui/routes.ts || abort "$kind-add-route" "route edit did not apply to e2e/ui/routes.ts"
+  # The app adds its own axe exclusion and screenshot mask in routes.ts. The baselines below are written with the h1
+  # masked, so the post-update suite run only passes if the updated spec still reads MASKS from the kept routes.ts.
+  perl -0pi -e "s#AXE_EXCLUDE: Exclusion\[\] = \[\]#AXE_EXCLUDE: Exclusion[] = [{ rule: 'color-contrast', selector: '[data-app-excluded]', why: 'e2e app exclusion' }]#; s#MASKS: string\[\] = \[\]#MASKS: string[] = ['h1']#" e2e/ui/routes.ts
+  grep -qF "[data-app-excluded]" e2e/ui/routes.ts && grep -qF "MASKS: string[] = ['h1']" e2e/ui/routes.ts \
+    || abort "$kind-add-app-exclusion" "exclusion and mask edit did not apply to e2e/ui/routes.ts"
   # From here the suite reads the app's own routes.ts.
   unset UI_ROUTES
   mv e2e/ui/visual.spec.ts-snapshots "$WORK/$kind-snapshots-base" || abort "$kind-move-baselines" "cannot move the first baselines aside"
@@ -209,6 +214,7 @@ app() {
   must "$kind-add-regression-suite-update" pass "${SHADCN[@]}" add "$REPO/regression-suite-update#$REF" -y --overwrite
   step "$kind-update-kept-app-css" pass cmp "$WORK/app-css.keep" "$app_css"
   step "$kind-update-kept-routes" pass cmp "$WORK/routes.keep" e2e/ui/routes.ts
+  step "$kind-update-kept-app-exclusion" pass sh -c "grep -qF \"selector: '[data-app-excluded]'\" e2e/ui/routes.ts && grep -qF \"MASKS: string[] = ['h1']\" e2e/ui/routes.ts"
   step "$kind-update-kept-icon" pass cmp "$WORK/icon.keep" "$icon_tsx"
   step "$kind-update-kept-allow-list" pass cmp "$WORK/allow.keep" "$allow"
   step "$kind-update-rewrote-ui-base-css" pass cmp "$ROOT/registry/styles/ui-base.css" "$ui_css"
@@ -274,13 +280,48 @@ bundles_consistent() {
 token_check_fixtures() {
   local check="$ROOT/registry/scripts/check-tokens.mjs"
   cd "$HERE/fixtures/tokens" || abort "token-fixtures-cd" "cannot cd to $HERE/fixtures/tokens"
+  # flags <name> <dir> <reason>: the check fails on the fixture dir, and its output has the reason.
+  flags() { STEP_REASON="$3" step "token-check-flags-$1" fail node "$check" "$2"; }
   step "token-check-fixtures-pass" pass node "$check" pass
-  STEP_REASON='star\.css:4  #f00 ' step "token-check-flags-star-rule" fail node "$check" fail-star-rule
-  STEP_REASON='between\.css:1  #0f0 ' step "token-check-flags-between-comments" fail node "$check" fail-between-comments
-  STEP_REASON='after\.css:2  #00f ' step "token-check-flags-after-comment-close" fail node "$check" fail-after-comment-close
-  STEP_REASON='before\.tsx:1  #abcdef ' step "token-check-flags-before-line-comment" fail node "$check" fail-before-line-comment
-  STEP_REASON='alpha\.css:1  rgb\(  \.z' step "token-check-flags-literal-alpha" fail node "$check" fail-literal-alpha
-  STEP_REASON='relative\.css:1  rgb\(  \.w' step "token-check-flags-relative-literal" fail node "$check" fail-relative-literal
+  step "token-check-app-css-overrides-pass" pass sh -c "cd app-pass && node '$check' src"
+  flags star-rule fail-star-rule 'star\.css:4  #f00 '
+  flags between-comments fail-between-comments 'between\.css:1  #0f0 '
+  flags after-comment-close fail-after-comment-close 'after\.css:2  #00f '
+  flags before-line-comment fail-before-line-comment 'before\.tsx:1  #abcdef '
+  flags literal-alpha fail-literal-alpha 'alpha\.css:1  rgb\(  \.z'
+  flags relative-literal fail-relative-literal 'relative\.css:1  rgb\(  \.w'
+  # A color function after a Tailwind _, in any case.
+  flags underscore-rgb fail-underscore-funcs 'u\.tsx:1  rgb\( '
+  flags underscore-rgba fail-underscore-funcs 'u\.tsx:2  rgba\( '
+  flags underscore-oklch fail-underscore-funcs 'u\.tsx:3  oklch\( '
+  flags underscore-hsl fail-underscore-funcs 'u\.tsx:4  hsl\( '
+  flags upper-case-rgb fail-underscore-funcs 'u\.tsx:5  RGB\( '
+  flags mixed-case-rgb fail-underscore-funcs 'u\.tsx:6  Rgb\( '
+  # Named colors in CSS values, arbitrary values and style objects.
+  flags named-border fail-named 'n\.css:1  red '
+  flags named-box-shadow fail-named 'n\.css:2  black '
+  flags named-gradient-stop fail-named 'n\.css:3  papayawhip '
+  flags named-var-fallback fail-named 'n\.css:4  seagreen '
+  flags named-arbitrary-shadow fail-named 'n\.tsx:1  black '
+  flags named-arbitrary-gradient fail-named 'n\.tsx:2  blue '
+  flags named-arbitrary-property fail-named 'n\.tsx:3  tomato '
+  flags named-style-object fail-named "n\.tsx:4  backgroundColor: 'rebeccapurple "
+  # Digits-only hex in a CSS value is a color, never text; an id selector is not a value.
+  flags css-digit-hex-underline fail-css-digit-hex 'h\.css:1  #000000 '
+  flags css-digit-hex-thin fail-css-digit-hex 'h\.css:2  #000000 '
+  flags css-digit-hex-gradient-stop fail-css-digit-hex 'h\.css:3  #111111 '
+  flags css-value-not-selector fail-css-value-not-selector '^1 problem'
+  flags css-value-hex fail-css-value-not-selector 's\.css:1  #bed  #bed \{ color'
+  flags regex-literal-hides-nothing fail-regex-hides-code 'r\.tsx:2  #abcdef '
+  flags multiline-func fail-multiline-func 'm\.css:2  rgb\( '
+  flags apostrophe-hides-nothing fail-apostrophe 'a\.tsx:1  #abc123 '
+  flags percent-rgb fail-percent 'p\.css:1  rgb\( '
+  flags percent-color fail-percent 'p\.css:2  color\( '
+  flags percent-hsl fail-percent 'p\.css:3  hsl\( '
+  flags markup-mid-line-slashes fail-markup-code 'v\.vue:2  #abcdef '
+  # @theme inline outputs are not overridable tokens.
+  STEP_REASON='src/index\.css:3  --color-card  is not defined in ui-base\.css' \
+    step "token-check-flags-theme-inline-override" fail sh -c "cd app-fail-theme-inline && node '$check' src"
 }
 
 cd "$ROOT" || abort "cd-root" "cannot cd to $ROOT"

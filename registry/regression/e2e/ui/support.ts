@@ -4,6 +4,11 @@ import { expect, type Page } from '@playwright/test'
 export const THEMES = ['light', 'dark'] as const
 export type Theme = (typeof THEMES)[number]
 
+// An axe rule skipped on nodes inside `selector` (el.closest(selector)), only while the `when` element is on the page
+// if it names one, and only when every node axe blames for it matches `related` if it names one. The rule still runs
+// everywhere else. `why` says where the issue comes from.
+export type Exclusion = { rule: string; selector: string; why: string; when?: string; related?: string }
+
 // '/' -> home, '/settings?tab=team' -> settings-tab-team
 export const slug = (route: string) => route.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'home'
 

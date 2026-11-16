@@ -30,7 +30,7 @@ npx shadcn@4.23.0 add wasimjalali/ui-base/base-next -y --overwrite
 
 For Next.js use `node scripts/check-tokens.mjs app components lib`.
 
-**Regression suite** (opt-in): `npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite -y --overwrite`, then `npx playwright install chromium`, list your routes in `e2e/ui/routes.ts` and run `npx playwright test -c playwright.ui.config.ts`. The config has its own name so it never overwrites an app's `playwright.config.ts`. The first run writes the baselines. They're per OS (`darwin` or `linux` in the file name), so CI writes and commits its own once.
+**Regression suite** (opt-in): `npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite -y --overwrite`, then `npx playwright install chromium`, list your routes in `e2e/ui/routes.ts` (with the app's own axe exclusions and screenshot masks in its `AXE_EXCLUDE` and `MASKS`) and run `npx playwright test -c playwright.ui.config.ts`. The config has its own name so it never overwrites an app's `playwright.config.ts`. The first run writes the baselines. They're per OS (`darwin` or `linux` in the file name), so CI writes and commits its own once.
 
 ## Base-owned and app-owned files
 
@@ -66,7 +66,7 @@ The app CSS starter is frozen: a release never changes it, since every app owns 
 | `token-check` | | `scripts/check-tokens.mjs` (create `scripts/check-tokens.allow.json` yourself if you need it) |
 | `guide` | | `DESIGN_SYSTEM.md` |
 
-Single items install the same way: `npx shadcn@4.23.0 add wasimjalali/ui-base/dialog`. A single component item doesn't bring `ui-base.css` or the app CSS file, so install `base` or `base-next` first; without them the component's classes have no tokens. Don't add a single component item with `--overwrite` to an app that has the base: the item pulls in `icon` through `registryDependencies`, and `--overwrite` then replaces the app-owned `icon.tsx` too. Add single items without `--overwrite`, or update through the update items.
+Single items install the same way: `npx shadcn@4.23.0 add wasimjalali/ui-base/dialog`. A single component item doesn't bring `ui-base.css` or the app CSS file, so install `base` or `base-next` first; without them the component's classes have no tokens. Don't add a single component item with `--overwrite` to an app that has the base: the items that render `Icon` (`checkbox`, `command`, `dialog`, `dropdown-menu`, `select` and `sheet`) pull in `icon` through `registryDependencies`, and `--overwrite` then replaces the app-owned `icon.tsx` too. Add single items without `--overwrite`, or update through the update items.
 
 ## Updating
 
@@ -86,7 +86,7 @@ Override token values in the app CSS file (`src/index.css` or `app/globals.css`)
 
 ## Releases
 
-Each release has an entry in [CHANGELOG.md](CHANGELOG.md): new icon names, new, deprecated or renamed tokens and anything app-owned an app must touch. Tokens are never renamed outright: a release adds the new name and keeps the old one as an alias (`--old: var(--new);`) for at least one release, so an app's overrides keep working until it moves over.
+Each release has an entry in [CHANGELOG.md](CHANGELOG.md): new icon names, new, deprecated or renamed tokens and anything app-owned an app must touch. Tokens are never renamed outright: a release adds the new name as an alias of the old one (`--new: var(--old);`, in both `:root` and `.dark` of `ui-base.css`) for at least one release. Components read the new name, which follows the old one, so an app's override of either name still reaches them.
 
 ## Private access
 
@@ -98,4 +98,4 @@ The repo is private. The shadcn CLI reads it with your GitHub credentials:
 ## Working on the registry
 
 - `npx shadcn@4.23.0 registry validate` checks `registry.json` and every source file.
-- `e2e/run.sh <ref>` is the end-to-end proof: it validates the registry at a pushed ref, installs it into fresh Vite and Next.js apps, renders the kitchen sink in `e2e/fixtures/`, builds (Next.js also builds a server component page that renders every component), runs the token check and the regression suite (twice), and checks that a new icon name, a hard-coded color, an unknown token override and a changed token all fail for the right reason. Then it overrides the brand, adds a route and allows a piece of content art, runs the update items and checks that the app-owned files survive byte for byte, the stale base-owned files are rewritten and the suite still passes. Before any of that it checks that each update item is its first-install item minus the app-owned files, with the same dependencies, and runs the token check against the fixtures in `e2e/fixtures/tokens/`. Run it through `~/.agents/tools/heavy-lock.sh` on the Mac.
+- `e2e/run.sh <ref>` is the end-to-end proof: it validates the registry at a pushed ref, installs it into fresh Vite and Next.js apps, renders the kitchen sink in `e2e/fixtures/`, builds (Next.js also builds a server component page that renders every component), runs the token check and the regression suite (twice), and checks that a new icon name, a hard-coded color, an unknown token override and a changed token all fail for the right reason. Then it overrides the brand, adds a route, an axe exclusion and a screenshot mask, and allows a piece of content art, runs the update items and checks that the app-owned files survive byte for byte, the stale base-owned files are rewritten and the suite still passes. Before any of that it checks that each update item is its first-install item minus the app-owned files, with the same dependencies, and runs the token check against the fixtures in `e2e/fixtures/tokens/`. Run it through `~/.agents/tools/heavy-lock.sh` on the Mac.

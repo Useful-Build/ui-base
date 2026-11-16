@@ -1,0 +1,4 @@
+<script>
+// old color #333333
+</script>
+<p>hi</p>
