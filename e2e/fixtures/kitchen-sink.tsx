@@ -221,13 +221,15 @@ function Gallery() {
       </Section>
 
       <Section title="Fields">
-        <div className="flex w-full max-w-sm flex-col gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="you@example.com" />
-        </div>
-        <div className="flex w-full max-w-sm flex-col gap-2">
-          <Label htmlFor="notes">Notes</Label>
-          <Textarea id="notes" placeholder="Anything we should know" />
+        <div className="flex w-full flex-wrap items-start gap-3">
+          <div className="flex w-full max-w-sm flex-col gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="you@example.com" />
+          </div>
+          <div className="flex w-full max-w-sm flex-col gap-2">
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea id="notes" placeholder="Anything we should know" />
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Checkbox id="terms" defaultChecked />
@@ -330,6 +332,7 @@ export default function KitchenSink() {
   if (open && !(OPEN_STATES as readonly string[]).includes(open)) throw new Error(`Unknown open state: ${open}`)
   return (
     <TooltipProvider>
+      <title>Kitchen sink</title>
       <main className="min-h-svh bg-background text-foreground">
         {open ? <div className="p-8">{OPEN[open as OpenState]()}</div> : <Gallery />}
       </main>
