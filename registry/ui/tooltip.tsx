@@ -4,7 +4,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Tooltip as TooltipPrimitive } from "radix-ui"
 
-// Mounted once in main.tsx. A short delay, so passing over icons doesn't flash labels.
+// Mount one provider near the app root. A short delay, so passing over icons doesn't flash labels.
 function TooltipProvider({
   delayDuration = 500,
   ...props

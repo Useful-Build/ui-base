@@ -25,6 +25,11 @@ export default defineConfig({
     baseURL: process.env.UI_BASE_URL ?? `http://localhost:${port}`,
     screenshot: 'only-on-failure',
   },
+  // Baselines are per OS: font rendering differs between macOS and Linux, so each file name ends in the platform
+  // (light-home-desktop-darwin.png, light-home-desktop-linux.png). Write and commit the baselines on the OS that
+  // runs the suite. CI on Linux writes its own once with --update-snapshots (on the runner or in the Playwright
+  // Docker image) and commits them next to the macOS ones.
+  snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}',
   // A shot fails past 100 changed pixels, a fixed count, so one missing icon fails even on a tall full-page shot.
   expect: { toHaveScreenshot: { animations: 'disabled', caret: 'hide', maxDiffPixels: 100 } },
   projects: [

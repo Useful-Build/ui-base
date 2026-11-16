@@ -1,17 +1,15 @@
 /*
- * The design system's one token file. Colors, type, radius, shadows and motion are defined here and nowhere else.
- * Restyle an app by changing the values in this file, never by hard-coding colors or sizes in components.
- * Components use these through Tailwind classes (bg-card, text-foreground-3, rounded-xl, shadow-menu...).
+ * ui-base.css: the base's token file. Owned by ui-base: `add update` (or `update-next`) rewrites it whole, so never
+ * edit it in an app. Restyle an app in its own CSS file (src/index.css or app/globals.css), which imports this file
+ * and overrides any role token value after the import.
+ *
+ * Colors, type, radius, shadows and motion are defined here and in the app's override block, nowhere else.
+ * Components use them through Tailwind classes (bg-card, text-foreground-3, rounded-xl, shadow-menu...).
  * No hex or rgba values anywhere else (npm run lint:tokens checks it; see DESIGN_SYSTEM.md).
  *
  * Token names follow shadcn/ui: a surface token and its -foreground pair, defined once for light
  * (:root) and once for dark (.dark). Components never know which theme is on.
  */
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "@fontsource-variable/geist";
-@import "@fontsource-variable/geist-mono";
-
 @custom-variant dark (&:is(.dark *));
 
 /* ---------- color tokens: light ---------- */
@@ -69,7 +67,7 @@
   --overlay: rgba(23, 23, 23, .78); /* dark chips on images and video */
   --overlay-foreground: #fafafa;  /* text and icons on the overlay, light in both themes */
   --dots: #cdcdcd;                /* the dotted page background */
-  --dots-live: #5a63ea;           /* the dot sweep while the agent works */
+  --dots-live: #5a63ea;           /* animated dots while work is running */
   --logo-tile: #fff;              /* tiles behind tool logos stay light in both themes */
   --logo-tile-foreground: #171717; /* text and icons on a logo tile, dark in both themes */
 

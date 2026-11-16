@@ -248,6 +248,12 @@ function Gallery() {
           <Label htmlFor="sounds">Sounds</Label>
         </div>
         <SelectDemo />
+        <Select defaultValue="weekly" disabled>
+          <SelectTrigger className="w-48" aria-label="Report frequency, locked"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="weekly">Weekly</SelectItem>
+          </SelectContent>
+        </Select>
       </Section>
 
       <Section title="Toggles">
@@ -309,6 +315,7 @@ function Gallery() {
       </Section>
 
       <Section title="Roles">
+        <span aria-hidden="true" className="size-7 rounded-md bg-brand" />
         <span className="rounded-md bg-brand-tint px-2 py-1 text-sm text-brand-text">Brand</span>
         <span className="rounded-md bg-destructive-tint px-2 py-1 text-sm text-destructive-text">Destructive</span>
         <span className="rounded-md bg-warning-tint px-2 py-1 text-sm text-warning-text">Warning</span>

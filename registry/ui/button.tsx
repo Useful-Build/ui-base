@@ -3,9 +3,9 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { Slot } from "radix-ui"
 
-// Focus uses the app-wide :focus-visible outline (src/index.css). Disabled buttons keep their look, like the old .btn.
+// Focus uses the app-wide :focus-visible outline from ui-base.css.
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md text-sm font-strong whitespace-nowrap transition-colors disabled:pointer-events-none aria-invalid:border-destructive",
+  "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md text-sm font-strong whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
@@ -29,7 +29,7 @@ const buttonVariants = cva(
     compoundVariants: [
       // A link is text: no box.
       { variant: "link", class: "h-auto px-0" },
-      // Icon buttons (the old .icon-btn): a soft square on hover, the glyph keeps its color.
+      // Ghost icon buttons: a soft square on hover, the glyph keeps its color.
       { variant: "ghost", size: ["icon", "icon-sm", "icon-lg"], class: "text-foreground-3 hover:bg-foreground/5 hover:text-foreground-3" },
     ],
     defaultVariants: {

@@ -1,21 +1,5 @@
-import { expect, type Page } from '@playwright/test'
-
-// The pages the UI suite checks, each in light and dark on desktop and phone. Add a route per screen, and one per
-// open state worth guarding (a menu, a dialog) if the app can open it from the URL.
+// The pages the UI suite checks, each in light and dark on desktop and phone. This file is the app's: ui-base
+// installs it once and `regression-suite-update` leaves it alone. Add a route per screen, and one per open state
+// worth guarding (a menu, a dialog) if the app can open it from the URL.
 // UI_ROUTES (comma separated) replaces the list for one run.
 export const ROUTES: string[] = process.env.UI_ROUTES ? process.env.UI_ROUTES.split(',') : ['/']
-export const THEMES = ['light', 'dark'] as const
-export type Theme = (typeof THEMES)[number]
-
-// '/' -> home, '/settings?tab=team' -> settings-tab-team
-export const slug = (route: string) => route.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'home'
-
-// Both theme providers (the Vite template's and next-themes) default to the system theme, so the color scheme
-// picks light or dark. Reduced motion makes enter animations finish at once.
-export async function openRoute(page: Page, route: string, theme: Theme) {
-  await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' })
-  await page.goto(route)
-  await page.waitForLoadState('networkidle')
-  await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${theme}\\b`))
-  await page.evaluate(() => document.fonts.ready)
-}

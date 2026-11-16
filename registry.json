@@ -402,36 +402,26 @@
     {
       "name": "tokens",
       "type": "registry:item",
-      "title": "Tokens (Vite)",
-      "description": "The one token file, written whole over src/index.css.",
-      "dependencies": [
-        "tw-animate-css",
-        "@fontsource-variable/geist",
-        "@fontsource-variable/geist-mono"
-      ],
+      "title": "ui-base.css (Vite)",
+      "description": "The base's token file at src/ui-base.css: role tokens for light and dark, the Tailwind theme, base styles and helpers. The app CSS file imports it.",
       "files": [
         {
-          "path": "registry/styles/tokens.css",
+          "path": "registry/styles/ui-base.css",
           "type": "registry:file",
-          "target": "~/src/index.css"
+          "target": "~/src/ui-base.css"
         }
       ]
     },
     {
       "name": "tokens-next",
       "type": "registry:item",
-      "title": "Tokens (Next.js)",
-      "description": "The one token file, written whole over app/globals.css.",
-      "dependencies": [
-        "tw-animate-css",
-        "@fontsource-variable/geist",
-        "@fontsource-variable/geist-mono"
-      ],
+      "title": "ui-base.css (Next.js)",
+      "description": "The base's token file at app/ui-base.css: role tokens for light and dark, the Tailwind theme, base styles and helpers. The app CSS file imports it.",
       "files": [
         {
-          "path": "registry/styles/tokens.css",
+          "path": "registry/styles/ui-base.css",
           "type": "registry:file",
-          "target": "~/app/globals.css"
+          "target": "~/app/ui-base.css"
         }
       ]
     },
@@ -465,7 +455,7 @@
       "name": "regression-suite",
       "type": "registry:item",
       "title": "UI regression suite",
-      "description": "Playwright visual and axe checks for every route, light and dark, desktop and phone.",
+      "description": "First install: Playwright visual and axe checks for every route, light and dark, desktop and phone, with the app's e2e/ui/routes.ts.",
       "devDependencies": [
         "@playwright/test",
         "@axe-core/playwright"
@@ -482,6 +472,11 @@
           "target": "~/e2e/ui/routes.ts"
         },
         {
+          "path": "registry/regression/e2e/ui/support.ts",
+          "type": "registry:file",
+          "target": "~/e2e/ui/support.ts"
+        },
+        {
           "path": "registry/regression/e2e/ui/visual.spec.ts",
           "type": "registry:file",
           "target": "~/e2e/ui/visual.spec.ts"
@@ -492,13 +487,46 @@
           "target": "~/e2e/ui/a11y.spec.ts"
         }
       ],
-      "docs": "UI suite added. Install the browser once with `npx playwright install chromium`, list your routes in e2e/ui/routes.ts, then run `npx playwright test`. The first run writes the baselines; commit them."
+      "docs": "UI suite added. Install the browser once with `npx playwright install chromium`, list your routes in e2e/ui/routes.ts, then run `npx playwright test`. The first run writes the baselines for this OS; commit them. Later updates: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite (it leaves e2e/ui/routes.ts alone)."
+    },
+    {
+      "name": "regression-suite-update",
+      "type": "registry:item",
+      "title": "UI regression suite (update)",
+      "description": "Updates the regression suite and leaves the app's e2e/ui/routes.ts alone.",
+      "devDependencies": [
+        "@playwright/test",
+        "@axe-core/playwright"
+      ],
+      "files": [
+        {
+          "path": "registry/regression/playwright.config.ts",
+          "type": "registry:file",
+          "target": "~/playwright.config.ts"
+        },
+        {
+          "path": "registry/regression/e2e/ui/support.ts",
+          "type": "registry:file",
+          "target": "~/e2e/ui/support.ts"
+        },
+        {
+          "path": "registry/regression/e2e/ui/visual.spec.ts",
+          "type": "registry:file",
+          "target": "~/e2e/ui/visual.spec.ts"
+        },
+        {
+          "path": "registry/regression/e2e/ui/a11y.spec.ts",
+          "type": "registry:file",
+          "target": "~/e2e/ui/a11y.spec.ts"
+        }
+      ],
+      "docs": "UI suite updated. e2e/ui/routes.ts was left alone. Run `npx playwright test`; if a change is meant to show, update the baselines on purpose with --update-snapshots."
     },
     {
       "name": "base",
       "type": "registry:item",
       "title": "UI base (Vite)",
-      "description": "Everything for a Vite app: tokens, components, icon seam, utils, token check and the guide.",
+      "description": "First install for a Vite app: ui-base.css, the app CSS starter (src/index.css), components, icon seam, utils, token check and the guide.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -611,18 +639,150 @@
           "target": "~/DESIGN_SYSTEM.md"
         },
         {
-          "path": "registry/styles/tokens.css",
+          "path": "registry/styles/ui-base.css",
+          "type": "registry:file",
+          "target": "~/src/ui-base.css"
+        },
+        {
+          "path": "registry/styles/app.css",
           "type": "registry:file",
           "target": "~/src/index.css"
         }
       ],
-      "docs": "UI base installed. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs src\". Read DESIGN_SYSTEM.md before building screens. For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite"
+      "docs": "UI base installed. Restyle the app in src/index.css (its override block); never edit src/ui-base.css. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs src\". Read DESIGN_SYSTEM.md before building screens. To update later, add wasimjalali/ui-base/update, never base again (base resets src/index.css). For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite -y --overwrite"
     },
     {
       "name": "base-next",
       "type": "registry:item",
       "title": "UI base (Next.js)",
-      "description": "Everything for a Next.js app: tokens, components, icon seam, utils, token check and the guide.",
+      "description": "First install for a Next.js app: ui-base.css, the app CSS starter (app/globals.css), components, icon seam, utils, token check and the guide.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge",
+        "lucide-react",
+        "radix-ui",
+        "class-variance-authority",
+        "cmdk",
+        "tw-animate-css"
+      ],
+      "files": [
+        {
+          "path": "registry/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "@lib/utils.ts"
+        },
+        {
+          "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/avatar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/badge.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/checkbox.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/command.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/label.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/popover.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/select.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/sheet.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/skeleton.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/switch.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/textarea.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/scripts/check-tokens.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/check-tokens.mjs"
+        },
+        {
+          "path": "registry/docs/DESIGN_SYSTEM.md",
+          "type": "registry:file",
+          "target": "~/DESIGN_SYSTEM.md"
+        },
+        {
+          "path": "registry/styles/ui-base.css",
+          "type": "registry:file",
+          "target": "~/app/ui-base.css"
+        },
+        {
+          "path": "registry/styles/app-next.css",
+          "type": "registry:file",
+          "target": "~/app/globals.css"
+        }
+      ],
+      "docs": "UI base installed. Restyle the app in app/globals.css (its override block); never edit app/ui-base.css. Keep next/font in app/layout.tsx: it supplies Geist and Geist Mono. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs app components lib\". Read DESIGN_SYSTEM.md before building screens. To update later, add wasimjalali/ui-base/update-next, never base-next again (base-next resets app/globals.css). For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite -y --overwrite"
+    },
+    {
+      "name": "update",
+      "type": "registry:item",
+      "title": "UI base update (Vite)",
+      "description": "Updates a Vite app: ui-base.css, components, icon seam, utils, token check and the guide. Leaves src/index.css alone.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -735,12 +895,134 @@
           "target": "~/DESIGN_SYSTEM.md"
         },
         {
-          "path": "registry/styles/tokens.css",
+          "path": "registry/styles/ui-base.css",
           "type": "registry:file",
-          "target": "~/app/globals.css"
+          "target": "~/src/ui-base.css"
         }
       ],
-      "docs": "UI base installed. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs app components lib\". Read DESIGN_SYSTEM.md before building screens. For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite"
+      "docs": "UI base updated. src/index.css and its overrides were left alone. Review the diff before committing."
+    },
+    {
+      "name": "update-next",
+      "type": "registry:item",
+      "title": "UI base update (Next.js)",
+      "description": "Updates a Next.js app: ui-base.css, components, icon seam, utils, token check and the guide. Leaves app/globals.css alone.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge",
+        "lucide-react",
+        "radix-ui",
+        "class-variance-authority",
+        "cmdk",
+        "tw-animate-css"
+      ],
+      "files": [
+        {
+          "path": "registry/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "@lib/utils.ts"
+        },
+        {
+          "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/avatar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/badge.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/checkbox.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/command.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/label.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/popover.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/select.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/sheet.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/skeleton.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/switch.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/textarea.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/scripts/check-tokens.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/check-tokens.mjs"
+        },
+        {
+          "path": "registry/docs/DESIGN_SYSTEM.md",
+          "type": "registry:file",
+          "target": "~/DESIGN_SYSTEM.md"
+        },
+        {
+          "path": "registry/styles/ui-base.css",
+          "type": "registry:file",
+          "target": "~/app/ui-base.css"
+        }
+      ],
+      "docs": "UI base updated. app/globals.css and its overrides were left alone. Review the diff before committing."
     }
   ]
 }

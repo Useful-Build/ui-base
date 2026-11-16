@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Select as SelectPrimitive } from "radix-ui"
@@ -34,8 +36,8 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        // Hover and open borders win over a caller's inline border (the old .select-btn did the same with !important).
-        "inline-flex w-fit items-center justify-between gap-2.5 rounded-lg border border-input bg-card pr-2.5 pl-[13px] text-base whitespace-nowrap transition-[border-color,box-shadow] enabled:hover:border-border-strong! disabled:pointer-events-none aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=default]:h-9.5 data-[size=sm]:h-8 data-[state=open]:border-foreground/45! data-[state=open]:shadow-halo *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:ellipsis",
+        // Hover and open borders win over a border class passed in by the caller (hence the !).
+        "inline-flex w-fit items-center justify-between gap-2.5 rounded-lg border border-input bg-card pr-2.5 pl-[13px] text-base whitespace-nowrap transition-[border-color,box-shadow] enabled:hover:border-border-strong! disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=default]:h-9.5 data-[size=sm]:h-8 data-[state=open]:border-foreground/45! data-[state=open]:shadow-halo *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:ellipsis",
         className
       )}
       {...props}
@@ -48,7 +50,7 @@ function SelectTrigger({
   )
 }
 
-// No enter motion: the list appears in place, like the app's other dropdowns, so it can be measured at once.
+// No enter motion: the list appears in place, so it can be measured at once.
 function SelectContent({
   className,
   children,

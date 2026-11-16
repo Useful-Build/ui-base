@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
@@ -5,7 +7,7 @@ import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui"
 
 import { toggleVariants } from "@/components/ui/toggle"
 
-// The segmented control (the old .seg): a soft track, the picked item a raised, lighter step (bg-fill-picked).
+// The segmented control: a soft track, the picked item a raised, lighter step (bg-fill-picked).
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
     spacing?: number
