@@ -62,7 +62,8 @@ const funcArgs = (line, start) => {
 }
 // Channel keywords of a relative color whose source is a token: rgb(from var(--a) r g b / 50%).
 const CHANNELS = new Set(['r', 'g', 'b', 'h', 's', 'l', 'c', 'w', 'a', 'x', 'y', 'z', 'alpha'])
-const VAR = '\u0000'
+// Stands in for each var(--x) while the rest is checked. Empty var() is never valid CSS, so it can't clash.
+const VAR = 'var()'
 const funcIsTokens = (line, m) => {
   const args = funcArgs(line, m.index)
   if (args === null || !/var\(/.test(args)) return false
