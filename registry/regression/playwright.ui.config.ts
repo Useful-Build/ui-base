@@ -1,7 +1,9 @@
 import { existsSync } from 'node:fs'
 import { defineConfig, devices } from '@playwright/test'
 
-// The UI regression suite (e2e/ui): every route in e2e/ui/routes.ts, light and dark, on desktop and phone.
+// The UI regression suite (e2e/ui): every route in e2e/ui/routes.ts, light and dark, on desktop and phone. Owned by
+// ui-base: `regression-suite-update` rewrites this file. Its own name keeps it clear of an app's playwright.config.ts.
+// Run it with: npx playwright test -c playwright.ui.config.ts
 // It runs against a production build. Override with env:
 //   UI_PORT        port for the built app (default 4173)
 //   UI_BASE_URL    test an app that's already running somewhere else (then no server is started)

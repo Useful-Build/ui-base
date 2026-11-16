@@ -95,14 +95,15 @@ copy_shots() {
 
 # app <kind: vite|next>
 app() {
-  local kind="$1" item update_item app_css starter ui_css page check_dirs
+  local kind="$1" item update_item app_css starter ui_css page check_dirs ui_dir lib_utils art tsc
   if [ "$kind" = vite ]; then
-    item=base; update_item=update; app_css=src/index.css; starter=app.css; ui_css=src/ui-base.css; icon_tsx=src/components/ui/icon.tsx
-    page=src/App.tsx; check_dirs="src"
+    item=base; update_item=update; app_css=src/index.css; starter=app.css; ui_css=src/ui-base.css; ui_dir=src/components/ui
+    lib_utils=src/lib/utils.ts; page=src/App.tsx; check_dirs="src"; art=src/art-preview.ts; tsc="npx tsc --noEmit -p tsconfig.app.json"
   else
-    item=base-next; update_item=update-next; app_css=app/globals.css; starter=app-next.css; ui_css=app/ui-base.css; icon_tsx=components/ui/icon.tsx
-    page=app/page.tsx; check_dirs="app components lib"
+    item=base-next; update_item=update-next; app_css=app/globals.css; starter=app-next.css; ui_css=app/ui-base.css; ui_dir=components/ui
+    lib_utils=lib/utils.ts; page=app/page.tsx; check_dirs="app components lib"; art=lib/art-preview.ts; tsc="npx tsc --noEmit"
   fi
+  local icon_tsx="$ui_dir/icon.tsx" icon_names="$ui_dir/icon-names.ts" allow=scripts/check-tokens.allow.json
   local dir="$WORK/$kind-app" out="$VERIFY/$kind"
   mkdir -p "$out"
   export UI_ROUTES="$ROUTES"
@@ -114,6 +115,8 @@ app() {
   # The base-owned token file and the app CSS starter must both be ours, whole.
   must "$kind-ui-base-css-installed" pass cmp "$ROOT/registry/styles/ui-base.css" "$ui_css"
   must "$kind-app-css-starter-installed" pass cmp "$ROOT/registry/styles/$starter" "$app_css"
+  must "$kind-icon-names-installed" pass cmp "$ROOT/registry/ui/icon-names.ts" "$icon_names"
+  must "$kind-allow-list-installed-empty" pass cmp "$ROOT/registry/scripts/check-tokens.allow.json" "$allow"
   cp "$HERE/fixtures/kitchen-sink.tsx" "$page"
   if [ "$kind" = next ]; then
     # A server component page (no "use client") importing client-only components must still build.
@@ -123,11 +126,14 @@ app() {
     step "$kind-no-fontsource" pass lacks fontsource package.json
   fi
 
-  if [ "$kind" = vite ]; then
-    step "$kind-typecheck" pass npx tsc --noEmit -p tsconfig.app.json
-  else
-    step "$kind-typecheck" pass npx tsc --noEmit
-  fi
+  step "$kind-typecheck" pass $tsc
+
+  # Negative: a release that adds an icon name (as a newer icon-names.ts would) must fail the app's type check, in
+  # its old icon.tsx, until the app maps the name.
+  perl -0pi -e 's#(export const ICON_NAMES = \[\n)#${1}  "zz_new_icon",\n#' "$icon_names"
+  grep -q '"zz_new_icon"' "$icon_names" || abort "$kind-negative-new-icon-name" "negative edit did not apply to $icon_names"
+  STEP_REASON="Property 'zz_new_icon' is missing" step "$kind-negative-new-icon-name" fail $tsc
+  cp "$ROOT/registry/ui/icon-names.ts" "$icon_names"
   step "$kind-build" pass npm run build
   if [ "$kind" = next ]; then
     step "$kind-server-component-page-built" pass grep -q ' /server-check' "$VERIFY/logs/$kind-build.log"
@@ -135,10 +141,22 @@ app() {
   npm pkg set "scripts.lint:tokens=node scripts/check-tokens.mjs $check_dirs"
   step "$kind-lint-tokens" pass npm run lint:tokens
 
+  # Negative: overriding a token ui-base.css doesn't define (a renamed or mistyped one) must fail the token check.
+  perl -0pi -e 's|\n:root \{\n\}\n|\n:root {\n  --zz-renamed-token: 1px;\n}\n|' "$app_css"
+  grep -qF -- '--zz-renamed-token' "$app_css" || abort "$kind-negative-unknown-token-override" "negative edit did not apply to $app_css"
+  STEP_REASON='css:[0-9]+  --zz-renamed-token  is not defined in ui-base\.css' \
+    step "$kind-negative-unknown-token-override" fail npm run lint:tokens
+  cp "$ROOT/registry/styles/$starter" "$app_css"
+  # An app-only token with the --app- prefix is fine, in both blocks.
+  perl -0pi -e 's|\n:root \{\n\}\n|\n:root {\n  --app-foo: 1px;\n}\n|; s|\n\.dark \{\n\}\n|\n.dark {\n  --app-foo: 2px;\n}\n|' "$app_css"
+  [ "$(grep -cF -- '--app-foo' "$app_css")" = 2 ] || abort "$kind-app-prefixed-token-override" "edit did not apply to $app_css"
+  step "$kind-app-prefixed-token-override" pass npm run lint:tokens
+  cp "$ROOT/registry/styles/$starter" "$app_css"
+
   must "$kind-add-regression-suite" pass "${SHADCN[@]}" add "$REPO/regression-suite#$REF" -y --overwrite
   must "$kind-playwright-install" pass npx playwright install chromium
-  UI_OUT_DIR="$out/run1" step "$kind-suite-run1-write-baselines" pass npx playwright test e2e/ui/visual.spec.ts --update-snapshots
-  UI_OUT_DIR="$out/run2" step "$kind-suite-run2-visual-and-a11y" pass npx playwright test
+  UI_OUT_DIR="$out/run1" step "$kind-suite-run1-write-baselines" pass npx playwright test -c playwright.ui.config.ts e2e/ui/visual.spec.ts --update-snapshots
+  UI_OUT_DIR="$out/run2" step "$kind-suite-run2-visual-and-a11y" pass npx playwright test -c playwright.ui.config.ts
 
   # Negative 1: a hard-coded color must fail the token check, and for that color.
   cp "$page" "$WORK/page.keep"
@@ -152,11 +170,13 @@ app() {
   perl -0pi -e 's#(:root \{.*?--primary: )\#171717;#${1}\#2d3bea;#s' "$ui_css"
   ! cmp -s "$ui_css" "$WORK/ui-base.keep" || abort "$kind-negative-changed-primary" "negative edit did not apply to $ui_css"
   UI_OUT_DIR="$out/negative-primary" STEP_REASON='pixels \(ratio [0-9.]+ of all image pixels\) are different' \
-    step "$kind-negative-changed-primary" fail npx playwright test e2e/ui/visual.spec.ts
+    step "$kind-negative-changed-primary" fail npx playwright test -c playwright.ui.config.ts e2e/ui/visual.spec.ts
   cp "$WORK/ui-base.keep" "$ui_css"
 
   must "$kind-reverted-ui-base-css" pass cmp "$ROOT/registry/styles/ui-base.css" "$ui_css"
   must "$kind-reverted-page" pass cmp "$HERE/fixtures/kitchen-sink.tsx" "$page"
+  must "$kind-reverted-icon-names" pass cmp "$ROOT/registry/ui/icon-names.ts" "$icon_names"
+  must "$kind-reverted-app-css" pass cmp "$ROOT/registry/styles/$starter" "$app_css"
   copy_shots "$out/screenshots-base"
 
   # ---------- update path: the app restyles itself and adds a route, then updates the base ----------
@@ -167,27 +187,42 @@ app() {
   # From here the suite reads the app's own routes.ts.
   unset UI_ROUTES
   mv e2e/ui/visual.spec.ts-snapshots "$WORK/$kind-snapshots-base" || abort "$kind-move-baselines" "cannot move the first baselines aside"
-  UI_OUT_DIR="$out/update-baselines" step "$kind-update-write-overridden-baselines" pass npx playwright test e2e/ui/visual.spec.ts --update-snapshots
+  UI_OUT_DIR="$out/update-baselines" step "$kind-update-write-overridden-baselines" pass npx playwright test -c playwright.ui.config.ts e2e/ui/visual.spec.ts --update-snapshots
+
+  # The app allows a piece of content art in its own allow list (app-owned): it fails before, passes after.
+  echo 'export const PREVIEW_FILL = "#ff0000"' > "$art"
+  STEP_REASON="art-preview\.ts:1  #ff0000" step "$kind-negative-art-not-allowed-yet" fail npm run lint:tokens
+  printf '["%s"]\n' "$art" > "$allow"
+  step "$kind-allow-list-allows-art" pass npm run lint:tokens
 
   cp "$app_css" "$WORK/app-css.keep"
   cp e2e/ui/routes.ts "$WORK/routes.keep"
+  cp "$allow" "$WORK/allow.keep"
   # The icon seam is app-owned: an app that swapped its icon set must keep it.
   echo '// app icon set' >> "$icon_tsx"
   cp "$icon_tsx" "$WORK/icon.keep"
   # Make base-owned files stale, so the update has to rewrite them.
   echo '/* stale */' >> "$ui_css"
   echo '// stale' >> e2e/ui/visual.spec.ts
+  for f in "$ui_dir/button.tsx" scripts/check-tokens.mjs "$lib_utils" "$icon_names"; do echo '// stale' >> "$f"; done
   must "$kind-add-$update_item" pass "${SHADCN[@]}" add "$REPO/$update_item#$REF" -y --overwrite
   must "$kind-add-regression-suite-update" pass "${SHADCN[@]}" add "$REPO/regression-suite-update#$REF" -y --overwrite
   step "$kind-update-kept-app-css" pass cmp "$WORK/app-css.keep" "$app_css"
   step "$kind-update-kept-routes" pass cmp "$WORK/routes.keep" e2e/ui/routes.ts
   step "$kind-update-kept-icon" pass cmp "$WORK/icon.keep" "$icon_tsx"
+  step "$kind-update-kept-allow-list" pass cmp "$WORK/allow.keep" "$allow"
   step "$kind-update-rewrote-ui-base-css" pass cmp "$ROOT/registry/styles/ui-base.css" "$ui_css"
   step "$kind-update-rewrote-suite" pass cmp "$ROOT/registry/regression/e2e/ui/visual.spec.ts" e2e/ui/visual.spec.ts
+  step "$kind-update-rewrote-button" pass cmp "$ROOT/registry/ui/button.tsx" "$ui_dir/button.tsx"
+  step "$kind-update-rewrote-check-tokens" pass cmp "$ROOT/registry/scripts/check-tokens.mjs" scripts/check-tokens.mjs
+  step "$kind-update-rewrote-utils" pass cmp "$ROOT/registry/lib/utils.ts" "$lib_utils"
+  step "$kind-update-rewrote-icon-names" pass cmp "$ROOT/registry/ui/icon-names.ts" "$icon_names"
 
   step "$kind-update-build" pass npm run build
   step "$kind-update-lint-tokens" pass npm run lint:tokens
-  UI_OUT_DIR="$out/update" step "$kind-update-suite-visual-and-a11y" pass npx playwright test
+  # The allowed art still holds its literal, and the updated check still allows it.
+  step "$kind-update-art-still-allowed" pass sh -c "grep -qF '#ff0000' '$art' && npm run lint:tokens"
+  UI_OUT_DIR="$out/update" step "$kind-update-suite-visual-and-a11y" pass npx playwright test -c playwright.ui.config.ts
   # 2 routes x 2 themes x 2 projects x 2 specs: both routes ran.
   step "$kind-update-suite-ran-both-routes" pass grep -Eq '\b16 passed\b' "$VERIFY/logs/$kind-update-suite-visual-and-a11y.log"
 
@@ -196,12 +231,61 @@ app() {
   if [ "$kind" = next ]; then font='Geist'; not_font='Geist Variable'; fi
   UI_OUT_DIR="$out/checks" EXPECT_PRIMARY_LIGHT="$PRIMARY_LIGHT" EXPECT_PRIMARY_DARK="$PRIMARY_DARK" \
     EXPECT_BRAND_LIGHT="$BRAND_LIGHT" EXPECT_BRAND_DARK="$BRAND_DARK" EXPECT_FONT="$font" EXPECT_NOT_FONT="$not_font" \
-    step "$kind-override-applies-and-font" pass npx playwright test e2e/ui/zz-checks.spec.ts --project=desktop
+    step "$kind-override-applies-and-font" pass npx playwright test -c playwright.ui.config.ts e2e/ui/zz-checks.spec.ts --project=desktop
   rm e2e/ui/zz-checks.spec.ts
 
   copy_shots "$out/screenshots-override"
 }
 
+# App-owned files: installed once by the first-install items, never shipped by an update item.
+APP_OWNED="registry/ui/icon.tsx,registry/styles/app.css,registry/styles/app-next.css,registry/scripts/check-tokens.allow.json,registry/regression/e2e/ui/routes.ts"
+
+# Each update item must be its first-install item minus the app-owned files, with the same dependencies.
+bundles_consistent() {
+  node -e '
+    const fs = require("fs")
+    const reg = JSON.parse(fs.readFileSync(process.argv[1], "utf8"))
+    const appOwned = new Set(process.argv[2].split(","))
+    const items = Object.fromEntries(reg.items.map(i => [i.name, i]))
+    const key = f => JSON.stringify([f.path, f.type, f.target ?? null])
+    let bad = 0
+    const fail = msg => { console.error("DIFF " + msg); bad++ }
+    for (const [first, update] of [["base", "update"], ["base-next", "update-next"], ["regression-suite", "regression-suite-update"]]) {
+      const a = items[first], b = items[update]
+      if (!a || !b) { fail(`missing item ${first} or ${update}`); continue }
+      const want = a.files.filter(f => !appOwned.has(f.path)).map(key)
+      const have = b.files.map(key)
+      for (const k of want) if (!have.includes(k)) fail(`${update} lacks ${k}, which ${first} ships`)
+      for (const k of have) if (!want.includes(k)) fail(`${update} ships ${k}, which is app-owned or not in ${first}`)
+      if (new Set(have).size !== have.length) fail(`${update} lists a file twice`)
+      for (const field of ["dependencies", "devDependencies"]) {
+        const x = [...(a[field] ?? [])].sort().join(" "), y = [...(b[field] ?? [])].sort().join(" ")
+        if (x !== y) fail(`${field} differ: ${first} [${x}], ${update} [${y}]`)
+      }
+      const owned = a.files.filter(f => appOwned.has(f.path)).map(f => f.path)
+      console.log(`${first} -> ${update}: ${have.length} files, app-owned left out: ${owned.join(", ") || "none"}`)
+    }
+    if (bad) { console.error(`${bad} difference(s) between the first-install and update items`); process.exit(1) }
+    console.log("bundles consistent")
+  ' "$ROOT/registry.json" "$APP_OWNED"
+}
+
+# The token check against small fixtures: comments, var() exemptions and the lines that must still be flagged.
+token_check_fixtures() {
+  local check="$ROOT/registry/scripts/check-tokens.mjs"
+  cd "$HERE/fixtures/tokens" || abort "token-fixtures-cd" "cannot cd to $HERE/fixtures/tokens"
+  step "token-check-fixtures-pass" pass node "$check" pass
+  STEP_REASON='star\.css:4  #f00 ' step "token-check-flags-star-rule" fail node "$check" fail-star-rule
+  STEP_REASON='between\.css:1  #0f0 ' step "token-check-flags-between-comments" fail node "$check" fail-between-comments
+  STEP_REASON='after\.css:2  #00f ' step "token-check-flags-after-comment-close" fail node "$check" fail-after-comment-close
+  STEP_REASON='before\.tsx:1  #abcdef ' step "token-check-flags-before-line-comment" fail node "$check" fail-before-line-comment
+  STEP_REASON='alpha\.css:1  rgb\(  \.z' step "token-check-flags-literal-alpha" fail node "$check" fail-literal-alpha
+  STEP_REASON='relative\.css:1  rgb\(  \.w' step "token-check-flags-relative-literal" fail node "$check" fail-relative-literal
+}
+
+cd "$ROOT" || abort "cd-root" "cannot cd to $ROOT"
+must "bundle-consistency" pass bundles_consistent
+token_check_fixtures
 cd "$ROOT" || abort "cd-root" "cannot cd to $ROOT"
 must "validate-registry" pass "${SHADCN[@]}" registry validate "$REPO#$REF"
 app vite

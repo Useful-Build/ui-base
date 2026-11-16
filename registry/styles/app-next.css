@@ -1,6 +1,7 @@
 /*
  * The app's CSS file. Owned by the app: ui-base installs it once and never overwrites it.
  * The base's tokens, Tailwind theme and base styles come from ui-base.css, which `add update-next` keeps current.
+ * This starter is frozen: a release never changes it, since apps own their copy. Anything new ships in ui-base.css.
  * Fonts come from next/font in app/layout.tsx (the Next.js template's Geist and Geist Mono), which sets
  * --font-sans and --font-mono on <html>.
  */
@@ -10,7 +11,9 @@
 
 /*
  * Restyle this app here: override any role token value; never edit ui-base.css.
- * Set a token for light in :root and for dark in .dark, for example `--primary: ...;` and `--brand: ...;`.
+ * Set every token you override in both blocks, :root for light and .dark for dark, for example `--primary: ...;`
+ * and `--brand: ...;`. A token set only in :root leaks into dark mode, since this file loads after ui-base.css.
+ * Only tokens ui-base.css defines can be overridden (lint:tokens checks). An app-only token starts with --app-.
  * The full list of tokens is in ui-base.css and DESIGN_SYSTEM.md. Add the app's own styles below.
  */
 :root {

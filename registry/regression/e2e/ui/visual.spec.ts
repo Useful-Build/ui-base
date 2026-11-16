@@ -1,6 +1,7 @@
 // Visual regression: every route in routes.ts, light and dark, compared with the baselines in visual.spec.ts-snapshots/.
 // The first run writes the baselines. After a change that's meant to show, update them on purpose
-// (npx playwright test e2e/ui/visual.spec.ts --update-snapshots) so the image diff shows in the PR.
+// (npx playwright test -c playwright.ui.config.ts e2e/ui/visual.spec.ts --update-snapshots) so the image diff shows
+// in the PR.
 import { expect, test } from '@playwright/test'
 import { ROUTES } from './routes'
 import { openRoute, slug, THEMES } from './support'

@@ -7,10 +7,22 @@ This app runs on [shadcn/ui](https://ui.shadcn.com) (Radix base) and Tailwind v4
 | Layer | Where | Rule |
 |---|---|---|
 | Base tokens | `src/ui-base.css` (Vite) or `app/ui-base.css` (Next.js) | Owned by the base: updates rewrite it, so never edit it. Every role token for light (`:root`) and dark (`.dark`), the Tailwind theme, base styles and helpers. Tailwind's stock palette is off (`--color-*: initial`), so `bg-white` or `text-red-500` don't compile. |
-| App CSS | `src/index.css` (Vite) or `app/globals.css` (Next.js) | Owned by the app: installed once, never overwritten. Imports Tailwind and `ui-base.css`, then overrides token values in its `:root` and `.dark` blocks. With `ui-base.css`, the only files with color values. |
-| Components | `components/ui/*.tsx` | shadcn components, owned and restyled. Variants and sizes through `cva`. |
-| Icon seam | `components/ui/icon.tsx` | The one place icons come from. See [Icons](#icons). |
-| App pieces | your own folders | Compose components with Tailwind classes. No colors, no one-off sizes. |
+| App CSS | `src/index.css` (Vite) or `app/globals.css` (Next.js) | Owned by the app: installed once, never overwritten. Imports Tailwind and `ui-base.css`, then overrides token values in its `:root` and `.dark` blocks. With `ui-base.css`, the only files with color values. The starter is frozen: anything new ships in `ui-base.css`. |
+| Components | `components/ui/*.tsx` | Owned by the base: updates rewrite them, so never edit them. shadcn components, restyled. Variants and sizes through `cva`. |
+| Icon seam | `components/ui/icon.tsx` | Owned by the app. The one place icons come from. See [Icons](#icons). |
+| Icon names | `components/ui/icon-names.ts` | Owned by the base. Every icon name the components use, and the `IconName` type. |
+| App pieces | your own folders | Compose components with Tailwind classes. No colors, no one-off sizes. App-specific variants live here. |
+
+The rule behind the split: anything an app is told to edit is app-owned, installed once and never shipped by an update. Everything else is base-owned and rewritten on update.
+
+| File | Owner | On update |
+|---|---|---|
+| `ui-base.css`, `components/ui/` (except `icon.tsx`), `components/ui/icon-names.ts`, `lib/utils.ts`, `scripts/check-tokens.mjs`, this guide | base | rewritten |
+| The app CSS file (`src/index.css` or `app/globals.css`) | app | left alone |
+| `components/ui/icon.tsx` | app | left alone |
+| `scripts/check-tokens.allow.json` | app | left alone |
+| `playwright.ui.config.ts`, `e2e/ui/support.ts`, `e2e/ui/*.spec.ts` | base | rewritten |
+| `e2e/ui/routes.ts` | app | left alone |
 
 ## Tokens
 
@@ -54,7 +66,7 @@ For a lighter step of any token use an opacity modifier: `bg-foreground/5` (a ho
 - **Motion:** 150ms with `ease-out` is the default for `transition-*`. `ease-in-out` is for looping motion. Reduced motion turns animations off.
 - **Helpers:** `ellipsis` (one line, cut with an ellipsis) and `mono-label` (small uppercase mono label).
 
-`lib/utils.ts` teaches tailwind-merge these scales, so `cn('text-md', 'leading-6')` keeps both classes. When you add a size, weight, shadow or tracking name to the app CSS file, add it there too.
+`lib/utils.ts` teaches tailwind-merge these scales, so `cn('text-md', 'leading-6')` keeps both classes. It's base-owned, so a new size, weight, shadow or tracking name goes to ui-base (in `ui-base.css` and `lib/utils.ts`, in a release), not into the app.
 
 ## Components
 
@@ -69,15 +81,20 @@ To add another shadcn component: `npx shadcn@latest add <name>`. Then swap its l
 
 Components never import an icon library. They render `<Icon name="check" />` from `components/ui/icon.tsx`, with the same props everywhere: `name`, `size`, `weight`, `fill`, `style` and `className`. Names are Material-style (`search`, `close`, `check`, `unfold_more`, `expand_less`, `expand_more`, `chevron_right`).
 
-That file is the icon seam. The base maps the names to lucide-react, with `weight` turned into a stroke width (300 is 1.5, 400 is 2, 500 is 2.25). An app with its own icon set (Material Symbols, say) replaces only that file and keeps the props, so every component stays identical across apps. An unknown name throws, so a missing icon fails loud instead of rendering nothing. The file is app-owned: `update` never overwrites it.
+That file is the icon seam. The base maps the names to lucide-react, with `weight` turned into a stroke width (300 is 1.5, 400 is 2, 500 is 2.25). An app with its own icon set replaces only that file and keeps the props, so every component stays identical across apps. The file is app-owned: `update` never overwrites it.
+
+The names come from `components/ui/icon-names.ts`, which is base-owned: it exports `ICON_NAMES` and `type IconName`, and updates rewrite it. `icon.tsx` maps them with `satisfies Record<IconName, LucideIcon>` and types `name` as `IconName`. So when a release adds a name, the app's type check fails in `icon.tsx` right after the update, until the app maps it. Keep that check whatever icon set you use:
+
+- **An icon set with components** (lucide, Phosphor): keep a map typed `satisfies Record<IconName, ...>`.
+- **A font ligature set with no map** (Material Symbols): the name is the glyph, so nothing forces a check. Keep an exhaustive one anyway, for example `const GLYPHS = { check: "check", close: "close", ... } satisfies Record<IconName, string>`, and render `GLYPHS[name]`. Your own `name` type can be wider than `IconName` (`IconName | AppIconName`) if screens use more icons.
 
 ## Restyling an app
 
 Every app starts from the same tokens and components. To give it its own look:
 
-1. **Override token values** in the app CSS file (`src/index.css` or `app/globals.css`), in the `:root` block for light and the `.dark` block for dark, after the `ui-base.css` import: colors, `--radius`, shadows. Keep the names. Every component follows. Never edit `ui-base.css`.
-2. **Change component variants** in `components/ui/*.tsx` when a shape or state should differ for the whole app: add or edit a `cva` variant, never a one-off class on a single screen.
-3. **Never hard-code** a color, size or shadow in a screen. If no token fits, add one to the app CSS file (light and dark), map it in an `@theme inline` block there (`--color-name: var(--name);`) and use it through its class.
+1. **Override token values** in the app CSS file (`src/index.css` or `app/globals.css`), after the `ui-base.css` import: colors, `--radius`, shadows. Set every token you override in both blocks, `:root` for light and `.dark` for dark: a token set only in `:root` leaks into dark mode, since the app CSS file loads after `ui-base.css`. Keep the names; only tokens `ui-base.css` defines can be overridden. Every component follows. Never edit `ui-base.css`.
+2. **Don't edit `components/ui/`.** It's base-owned, so an update rewrites it. An app-specific variant lives in an app component composed from `components/ui` (a `PlanBadge` that wraps `Badge` with its own classes, say). A variant every app should have goes to ui-base, in a release.
+3. **Never hard-code** a color, size or shadow in a screen. If no token fits, add an app-only token to the app CSS file, named with the `--app-` prefix, in both `:root` and `.dark`. Map it in an `@theme inline` block there (`--color-app-name: var(--app-name);`) and use it through its class (`bg-app-name`). `lint:tokens` fails on an override of any other name `ui-base.css` doesn't define, so a renamed or mistyped token can't silently drop an override.
 
 ## Updating
 
@@ -87,7 +104,9 @@ Update with the `update` items, never with `base` again (that resets the app CSS
 - Next.js: `npx shadcn@4.23.0 add wasimjalali/ui-base/update-next -y --overwrite`
 - Regression suite: `npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite`
 
-They rewrite `ui-base.css`, `components/ui/`, `lib/utils.ts`, the token check, this guide and the suite's own files. The app CSS file and `e2e/ui/routes.ts` stay as they are. Component variants you changed are rewritten too, so review the diff and reapply them before committing.
+They rewrite the base-owned files: `ui-base.css`, `components/ui/` (except `icon.tsx`), `icon-names.ts`, `lib/utils.ts`, the token check, this guide and the suite's own files. The app-owned files stay as they are: the app CSS file, `icon.tsx`, `scripts/check-tokens.allow.json` and `e2e/ui/routes.ts`. Read the release's entry in ui-base's `CHANGELOG.md` for new icon names, new or deprecated tokens and anything app-owned to touch, then run the type check and `lint:tokens` and review the diff before committing.
+
+Don't add a single component item with `--overwrite`: it pulls in `icon` through `registryDependencies` and would replace your `icon.tsx`. Use the update items, or add single items without `--overwrite`.
 
 ## Dark mode
 
@@ -95,5 +114,5 @@ The tokens switch on a `dark` class on `<html>`. In Vite, the template's `ThemeP
 
 ## Checks
 
-- **`npm run lint:tokens`** runs `scripts/check-tokens.mjs`, which fails on any hex, color function, named CSS color or stock Tailwind palette class outside `ui-base.css` and the app CSS file. A color function that only wraps tokens (`color-mix(in oklab, var(--brand) 40%, transparent)`) is fine. Add it to `package.json`: `"lint:tokens": "node scripts/check-tokens.mjs src"` (Next.js: `app components lib`). Content art that is a picture rather than UI goes in the small `ALLOWED` list at the top of the script.
-- **The regression suite** (`npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite`) adds `playwright.config.ts` and `e2e/ui/`. It takes a screenshot of every route in `e2e/ui/routes.ts` in light and dark, on desktop and phone, and runs axe (WCAG 2.1 AA) on each. A shot fails past 100 changed pixels. The first run writes the baselines; commit them, and update them on purpose with `--update-snapshots` when a change is meant to show. Baselines are per OS (the file name ends in `darwin` or `linux`), so CI writes and commits its own on its OS once. Update the suite with `regression-suite-update`, which leaves `routes.ts` alone.
+- **`npm run lint:tokens`** runs `scripts/check-tokens.mjs`, which fails on any hex, color function, named CSS color or stock Tailwind palette class outside `ui-base.css` and the app CSS file. Comments are skipped. A color function that only wraps tokens (`color-mix(in oklab, var(--brand) 40%, transparent)`, `rgb(var(--brand) / 0.5)`, `rgb(from var(--brand) r g b / 50%)`) is fine. It also fails when the app CSS file's `:root` or `.dark` blocks set a `--name` that `ui-base.css` doesn't define, unless it starts with `--app-`. Add it to `package.json`: `"lint:tokens": "node scripts/check-tokens.mjs src"` (Next.js: `app components lib`). Content art that is a picture rather than UI goes in the app's own `scripts/check-tokens.allow.json`, a JSON array of paths relative to the project root (`["src/art/file-preview.tsx"]`). Never edit the script itself: it's base-owned.
+- **The regression suite** (`npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite`) adds `playwright.ui.config.ts` and `e2e/ui/`; run it with `npx playwright test -c playwright.ui.config.ts`. The config has its own name, so it never overwrites the app's `playwright.config.ts`. It takes a screenshot of every route in `e2e/ui/routes.ts` in light and dark, on desktop and phone, and runs axe (WCAG 2.1 AA) on each. A shot fails past 100 changed pixels. The first run writes the baselines; commit them, and update them on purpose with `--update-snapshots` when a change is meant to show. Baselines are per OS (the file name ends in `darwin` or `linux`), so CI writes and commits its own on its OS once. Update the suite with `regression-suite-update`, which leaves `routes.ts` alone.

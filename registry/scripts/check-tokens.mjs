@@ -1,16 +1,36 @@
 // Fails when a color is written outside the token files. Every color goes through ui-base.css or the app CSS file
 // that imports it and overrides tokens (src/index.css in a Vite app, app/globals.css in a Next app).
+// It also fails when the app CSS file's :root or .dark blocks set a --name that ui-base.css doesn't define (a renamed
+// or mistyped token would otherwise do nothing). App-only tokens start with --app- and are always fine.
 // Run from the project root: node scripts/check-tokens.mjs <dir> [dir...]   e.g. `src`, or `app components lib`.
+// Owned by ui-base: `add update` rewrites this file, so don't edit it. To allow content art that is a picture rather
+// than UI (file previews, canvas drawings), list its path, relative to the project root, in the app's own
+// scripts/check-tokens.allow.json (a JSON array of paths), which updates leave alone.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { dirname, join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-// Files allowed to hold color values, relative to the project root: ui-base.css and the app CSS file, wherever the
-// framework puts them. Add content art that is a picture rather than UI (file previews, canvas drawings) here, one
-// path per entry.
-const ALLOWED = new Set([
-  'src/index.css', 'app/globals.css', 'src/app/globals.css',
-  'src/ui-base.css', 'app/ui-base.css', 'src/app/ui-base.css',
-])
+// The app CSS file, wherever the framework puts it. With ui-base.css, the only files allowed to hold color values.
+const APP_CSS = new Set(['src/index.css', 'app/globals.css', 'src/app/globals.css'])
+const BUILT_IN = [...APP_CSS, 'src/ui-base.css', 'app/ui-base.css', 'src/app/ui-base.css']
+
+const ALLOW_FILE = join(dirname(fileURLToPath(import.meta.url)), 'check-tokens.allow.json')
+const appAllowed = () => {
+  if (!existsSync(ALLOW_FILE)) return []
+  let list
+  try {
+    list = JSON.parse(readFileSync(ALLOW_FILE, 'utf8'))
+  } catch (e) {
+    console.error(`check-tokens: ${relative(process.cwd(), ALLOW_FILE)} is not valid JSON: ${e.message}`)
+    process.exit(2)
+  }
+  if (!Array.isArray(list) || !list.every(p => typeof p === 'string')) {
+    console.error(`check-tokens: ${relative(process.cwd(), ALLOW_FILE)} must be a JSON array of paths`)
+    process.exit(2)
+  }
+  return list
+}
+const ALLOWED = new Set([...BUILT_IN, ...appAllowed()])
 
 const dirs = process.argv.slice(2)
 if (!dirs.length) {
@@ -26,9 +46,9 @@ for (const d of dirs) {
 
 const HEX = /#[0-9a-fA-F]{3,8}\b/g
 const FUNC = /(?<![.\w-])(?:rgba?|hsla?|hwb|oklch|oklab|lab|lch|color-mix|color)\(/g
-// A color function is fine when it only mixes or wraps tokens: rgb(var(--x) / 50%), color-mix(in oklab, var(--a) 40%,
-// var(--b)), also in a Tailwind class where _ stands for a space. Anything else in it (a number, a named color) is a
-// literal.
+// A color function is fine when it only mixes or wraps tokens: rgb(var(--x) / 50%), rgb(var(--x) / 0.5),
+// color-mix(in oklab, var(--a) 40%, var(--b)), a relative color from a token (rgb(from var(--a) r g b / 50%)), also in
+// a Tailwind class where _ stands for a space. Anything else in it (a channel number, a named color) is a literal.
 const FUNC_KEYWORDS = new Set(['in', 'srgb', 'srgb-linear', 'display-p3', 'a98-rgb', 'prophoto-rgb', 'rec2020', 'lab',
   'oklab', 'lch', 'oklch', 'hsl', 'hwb', 'xyz', 'xyz-d50', 'xyz-d65', 'shorter', 'longer', 'increasing', 'decreasing',
   'hue', 'transparent', 'currentcolor'])
@@ -40,12 +60,26 @@ const funcArgs = (line, start) => {
   }
   return null
 }
+// Channel keywords of a relative color whose source is a token: rgb(from var(--a) r g b / 50%).
+const CHANNELS = new Set(['r', 'g', 'b', 'h', 's', 'l', 'c', 'w', 'a', 'x', 'y', 'z', 'alpha'])
+const VAR = '\u0000'
 const funcIsTokens = (line, m) => {
   const args = funcArgs(line, m.index)
   if (args === null || !/var\(/.test(args)) return false
   let rest = args
-  for (let prev; prev !== rest;) { prev = rest; rest = rest.replace(/var\(\s*--[\w-]+\s*\)/g, ' ') }
-  return rest.split(/[\s,_/]+/).filter(Boolean).every(t => FUNC_KEYWORDS.has(t.toLowerCase()) || /^\d*\.?\d+%$/.test(t))
+  for (let prev; prev !== rest;) { prev = rest; rest = rest.replace(/var\(\s*--[\w-]+\s*\)/g, ` ${VAR} `) }
+  const words = s => s.split(/[\s,_]+/).filter(Boolean)
+  const [main, alpha, ...extra] = rest.split('/')
+  if (extra.length) return false
+  const head = words(main)
+  const relativeColor = head[0]?.toLowerCase() === 'from'
+  if (relativeColor && head[1] !== VAR) return false
+  const isChannel = t => relativeColor && CHANNELS.has(t.toLowerCase())
+  const mainOk = head.every((t, i) => t === VAR || (relativeColor && i === 0) || isChannel(t) ||
+    FUNC_KEYWORDS.has(t.toLowerCase()) || /^\d*\.?\d+%$/.test(t))
+  // After the slash, the alpha: a token, a number or a percentage (rgb(var(--a) / 0.5)).
+  const alphaOk = alpha === undefined || words(alpha).every(t => t === VAR || isChannel(t) || /^\d*\.?\d+%?$/.test(t))
+  return mainOk && alphaOk
 }
 // A named CSS color as a style value (`color: white`, `background: 'black'`, `bg-[red]`), not as a name in code
 // (`variant="white"`, `tone: 'grey'`). `transparent` and `currentColor` are fine.
@@ -75,14 +109,81 @@ const hexIsText = (line, m) => {
 const walk = d => readdirSync(d, { withFileTypes: true }).flatMap(e =>
   e.isDirectory() ? walk(join(d, e.name)) : /\.(tsx?|jsx?|mjs|css|mdx|html|astro|vue|svelte)$/.test(e.name) ? [join(d, e.name)] : [])
 
+// Blanks out comments and keeps everything else in place, so line and column numbers still match the file.
+// Block comments are tracked across lines, several to a line. In JS-like files, // starts a line comment, except
+// inside a string or right after a colon (https://...). Quoted strings are kept, since a color in a string is a literal.
+const stripComments = (text, js) => {
+  let out = '', i = 0, quote = null
+  const blank = s => s.replace(/[^\n]/g, ' ')
+  while (i < text.length) {
+    const c = text[i], next = text[i + 1]
+    if (quote) {
+      out += c
+      if (c === '\\') { out += next ?? ''; i += 2; continue }
+      if (c === quote || (c === '\n' && quote !== '`')) quote = null
+      i++
+    } else if (c === '/' && next === '*') {
+      const end = text.indexOf('*/', i + 2)
+      const stop = end === -1 ? text.length : end + 2
+      out += blank(text.slice(i, stop))
+      i = stop
+    } else if (js && c === '/' && next === '/' && text[i - 1] !== ':') {
+      const end = text.indexOf('\n', i)
+      const stop = end === -1 ? text.length : end
+      out += blank(text.slice(i, stop))
+      i = stop
+    } else {
+      if (c === '"' || c === "'" || c === '`') quote = c
+      out += c
+      i++
+    }
+  }
+  return out
+}
+
+// The --names the app CSS file sets in its :root and .dark blocks, with their line numbers.
+const OVERRIDE_SELECTOR = /^(?::root|html)?(?:\.dark)?$/
+const overrides = css => {
+  const found = [], stack = []
+  let start = 0
+  const declaration = end => {
+    const decl = css.slice(start, end)
+    const m = decl.match(/^\s*(--[\w-]+)\s*:/)
+    const selector = stack[stack.length - 1]
+    if (m && selector !== undefined && selector.split(',').every(p => p.trim() && OVERRIDE_SELECTOR.test(p.trim()))) {
+      const at = start + decl.indexOf(m[1])
+      found.push({ name: m[1], line: css.slice(0, at).split('\n').length })
+    }
+  }
+  for (let i = 0; i < css.length; i++) {
+    if (css[i] === '{') { stack.push(css.slice(start, i).trim()); start = i + 1 }
+    else if (css[i] === '}') { declaration(i); stack.pop(); start = i + 1 }
+    else if (css[i] === ';') { declaration(i); start = i + 1 }
+  }
+  return found
+}
+const definedIn = css => new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]))
+
 const hits = []
 for (const file of dirs.flatMap(d => walk(d))) {
   const rel = relative(process.cwd(), file)
+  const js = /\.(tsx?|jsx?|mjs)$/.test(file)
+  const text = stripComments(readFileSync(file, 'utf8'), js)
+  if (APP_CSS.has(rel)) {
+    const base = join(dirname(file), 'ui-base.css')
+    if (!existsSync(base)) {
+      console.error(`check-tokens: ${rel} has no ui-base.css next to it to check its overrides against`)
+      process.exit(2)
+    }
+    const known = definedIn(stripComments(readFileSync(base, 'utf8'), false))
+    for (const o of overrides(text)) {
+      if (!known.has(o.name) && !o.name.startsWith('--app-')) {
+        hits.push(`${rel}:${o.line}  ${o.name}  is not defined in ui-base.css. Use a token it defines, or prefix an app-only token with --app-.`)
+      }
+    }
+  }
   if (ALLOWED.has(rel)) continue
-  readFileSync(file, 'utf8').split('\n').forEach((raw, i) => {
-    // Skip comment lines; a block comment that opens and closes at the start of a line is cut and the rest checked.
-    const line = raw.replace(/^\s*\/\*.*?\*\//, '')
-    if (/^\s*(\/\/|\*|\/\*)/.test(line)) return
+  text.split('\n').forEach((line, i) => {
     const found = [
       ...[...line.matchAll(HEX)].filter(m => !hexIsText(line, m)),
       ...[...line.matchAll(FUNC)].filter(m => !funcIsTokens(line, m)),
@@ -94,7 +195,7 @@ for (const file of dirs.flatMap(d => walk(d))) {
 }
 
 if (hits.length) {
-  console.error(`${hits.length} color literal(s) outside the token files. Use a token class (bg-card, text-foreground-3, border-border...) or add a token:\n`)
+  console.error(`${hits.length} problem(s): a color literal outside the token files, or an override of a token ui-base.css doesn't define. Use a token class (bg-card, text-foreground-3, border-border...) or add a token:\n`)
   console.error(hits.join('\n'))
   process.exit(1)
 }

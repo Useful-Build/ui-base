@@ -24,7 +24,7 @@
       "name": "icon",
       "type": "registry:ui",
       "title": "Icon",
-      "description": "The icon seam: Material-style names mapped to lucide-react. Swap this one file to change an app's icon set.",
+      "description": "The icon seam: Material-style names mapped to lucide-react, plus icon-names.ts, the names the components use. Swap icon.tsx to change an app's icon set.",
       "dependencies": [
         "lucide-react"
       ],
@@ -34,6 +34,10 @@
       "files": [
         {
           "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/icon-names.ts",
           "type": "registry:ui"
         }
       ]
@@ -429,7 +433,7 @@
       "name": "token-check",
       "type": "registry:item",
       "title": "Token check",
-      "description": "Fails on any color literal outside the token file.",
+      "description": "Fails on any color literal outside the token files, and on an app override of a token ui-base.css doesn't define. Reads the app's scripts/check-tokens.allow.json if it exists.",
       "files": [
         {
           "path": "registry/scripts/check-tokens.mjs",
@@ -455,16 +459,16 @@
       "name": "regression-suite",
       "type": "registry:item",
       "title": "UI regression suite",
-      "description": "First install: Playwright visual and axe checks for every route, light and dark, desktop and phone, with the app's e2e/ui/routes.ts.",
+      "description": "First install: Playwright visual and axe checks for every route, light and dark, desktop and phone, with playwright.ui.config.ts and the app's e2e/ui/routes.ts.",
       "devDependencies": [
         "@playwright/test",
         "@axe-core/playwright"
       ],
       "files": [
         {
-          "path": "registry/regression/playwright.config.ts",
+          "path": "registry/regression/playwright.ui.config.ts",
           "type": "registry:file",
-          "target": "~/playwright.config.ts"
+          "target": "~/playwright.ui.config.ts"
         },
         {
           "path": "registry/regression/e2e/ui/routes.ts",
@@ -487,7 +491,7 @@
           "target": "~/e2e/ui/a11y.spec.ts"
         }
       ],
-      "docs": "UI suite added. Install the browser once with `npx playwright install chromium`, list your routes in e2e/ui/routes.ts, then run `npx playwright test`. The first run writes the baselines for this OS; commit them. Later updates: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite (it leaves e2e/ui/routes.ts alone)."
+      "docs": "UI suite added. Install the browser once with `npx playwright install chromium`, list your routes in e2e/ui/routes.ts, then run `npx playwright test -c playwright.ui.config.ts`. The first run writes the baselines for this OS; commit them. Later updates: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite (it leaves e2e/ui/routes.ts alone)."
     },
     {
       "name": "regression-suite-update",
@@ -500,9 +504,9 @@
       ],
       "files": [
         {
-          "path": "registry/regression/playwright.config.ts",
+          "path": "registry/regression/playwright.ui.config.ts",
           "type": "registry:file",
-          "target": "~/playwright.config.ts"
+          "target": "~/playwright.ui.config.ts"
         },
         {
           "path": "registry/regression/e2e/ui/support.ts",
@@ -520,13 +524,13 @@
           "target": "~/e2e/ui/a11y.spec.ts"
         }
       ],
-      "docs": "UI suite updated. e2e/ui/routes.ts was left alone. Run `npx playwright test`; if a change is meant to show, update the baselines on purpose with --update-snapshots."
+      "docs": "UI suite updated. e2e/ui/routes.ts was left alone. Run `npx playwright test -c playwright.ui.config.ts`; if a change is meant to show, update the baselines on purpose with --update-snapshots."
     },
     {
       "name": "base",
       "type": "registry:item",
       "title": "UI base (Vite)",
-      "description": "First install for a Vite app: ui-base.css, the app CSS starter (src/index.css), components, icon seam, utils, token check and the guide.",
+      "description": "First install for a Vite app: ui-base.css, the app CSS starter (src/index.css), components, icon seam and names, utils, token check with its allow list, and the guide.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -546,6 +550,10 @@
         },
         {
           "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/icon-names.ts",
           "type": "registry:ui"
         },
         {
@@ -632,6 +640,11 @@
           "path": "registry/scripts/check-tokens.mjs",
           "type": "registry:file",
           "target": "~/scripts/check-tokens.mjs"
+        },
+        {
+          "path": "registry/scripts/check-tokens.allow.json",
+          "type": "registry:file",
+          "target": "~/scripts/check-tokens.allow.json"
         },
         {
           "path": "registry/docs/DESIGN_SYSTEM.md",
@@ -655,7 +668,7 @@
       "name": "base-next",
       "type": "registry:item",
       "title": "UI base (Next.js)",
-      "description": "First install for a Next.js app: ui-base.css, the app CSS starter (app/globals.css), components, icon seam, utils, token check and the guide.",
+      "description": "First install for a Next.js app: ui-base.css, the app CSS starter (app/globals.css), components, icon seam and names, utils, token check with its allow list, and the guide.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -673,6 +686,10 @@
         },
         {
           "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/icon-names.ts",
           "type": "registry:ui"
         },
         {
@@ -761,6 +778,11 @@
           "target": "~/scripts/check-tokens.mjs"
         },
         {
+          "path": "registry/scripts/check-tokens.allow.json",
+          "type": "registry:file",
+          "target": "~/scripts/check-tokens.allow.json"
+        },
+        {
           "path": "registry/docs/DESIGN_SYSTEM.md",
           "type": "registry:file",
           "target": "~/DESIGN_SYSTEM.md"
@@ -782,7 +804,7 @@
       "name": "update",
       "type": "registry:item",
       "title": "UI base update (Vite)",
-      "description": "Updates a Vite app: ui-base.css, components, icon seam, utils, token check and the guide. Leaves src/index.css alone.",
+      "description": "Updates a Vite app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: src/index.css, components/ui/icon.tsx and scripts/check-tokens.allow.json.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -799,6 +821,10 @@
           "path": "registry/lib/utils.ts",
           "type": "registry:lib",
           "target": "@lib/utils.ts"
+        },
+        {
+          "path": "registry/ui/icon-names.ts",
+          "type": "registry:ui"
         },
         {
           "path": "registry/ui/avatar.tsx",
@@ -896,13 +922,13 @@
           "target": "~/src/ui-base.css"
         }
       ],
-      "docs": "UI base updated. src/index.css and its overrides and components/ui/icon.tsx were left alone. Review the diff before committing."
+      "docs": "UI base updated. The app-owned files were left alone: src/index.css, components/ui/icon.tsx and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing."
     },
     {
       "name": "update-next",
       "type": "registry:item",
       "title": "UI base update (Next.js)",
-      "description": "Updates a Next.js app: ui-base.css, components, icon seam, utils, token check and the guide. Leaves app/globals.css alone.",
+      "description": "Updates a Next.js app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: app/globals.css, components/ui/icon.tsx and scripts/check-tokens.allow.json.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -917,6 +943,10 @@
           "path": "registry/lib/utils.ts",
           "type": "registry:lib",
           "target": "@lib/utils.ts"
+        },
+        {
+          "path": "registry/ui/icon-names.ts",
+          "type": "registry:ui"
         },
         {
           "path": "registry/ui/avatar.tsx",
@@ -1014,7 +1044,7 @@
           "target": "~/app/ui-base.css"
         }
       ],
-      "docs": "UI base updated. app/globals.css and its overrides and components/ui/icon.tsx were left alone. Review the diff before committing."
+      "docs": "UI base updated. The app-owned files were left alone: app/globals.css, components/ui/icon.tsx and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing."
     }
   ]
 }
