@@ -55,7 +55,7 @@ Run the same `add` again with `--overwrite` to pull the latest base:
 npx shadcn@4.23.0 add wasimjalali/ui-base/base -y --overwrite
 ```
 
-This rewrites the token file and components, so review the diff before committing. Pin a release with a tag or a full commit SHA: `wasimjalali/ui-base/base#v1.0.0`. Refs are not passed on to dependencies, which resolve from `main`, so tag releases from `main`.
+This rewrites the token file and components, so review the diff before committing. Pin a release with a tag or a full commit SHA: `wasimjalali/ui-base/base#v1.0.0`. `base`, `base-next` and `regression-suite` carry all their files themselves, so a pinned ref installs exactly that version. Single component items depend on `utils`, `icon` and so on through `registryDependencies`, and the CLI resolves those from `main` whatever ref you pin (refs are not passed on to dependencies).
 
 ## Restyling an app
 

@@ -499,34 +499,123 @@
       "type": "registry:item",
       "title": "UI base (Vite)",
       "description": "Everything for a Vite app: tokens, components, icon seam, utils, token check and the guide.",
-      "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/icon",
-        "wasimjalali/ui-base/avatar",
-        "wasimjalali/ui-base/badge",
-        "wasimjalali/ui-base/button",
-        "wasimjalali/ui-base/card",
-        "wasimjalali/ui-base/checkbox",
-        "wasimjalali/ui-base/command",
-        "wasimjalali/ui-base/dialog",
-        "wasimjalali/ui-base/dropdown-menu",
-        "wasimjalali/ui-base/input",
-        "wasimjalali/ui-base/label",
-        "wasimjalali/ui-base/popover",
-        "wasimjalali/ui-base/select",
-        "wasimjalali/ui-base/separator",
-        "wasimjalali/ui-base/sheet",
-        "wasimjalali/ui-base/skeleton",
-        "wasimjalali/ui-base/switch",
-        "wasimjalali/ui-base/textarea",
-        "wasimjalali/ui-base/toggle",
-        "wasimjalali/ui-base/toggle-group",
-        "wasimjalali/ui-base/tooltip",
-        "wasimjalali/ui-base/tokens",
-        "wasimjalali/ui-base/token-check",
-        "wasimjalali/ui-base/guide"
+      "dependencies": [
+        "clsx",
+        "tailwind-merge",
+        "lucide-react",
+        "radix-ui",
+        "class-variance-authority",
+        "cmdk",
+        "tw-animate-css",
+        "@fontsource-variable/geist",
+        "@fontsource-variable/geist-mono"
       ],
-      "files": [],
+      "files": [
+        {
+          "path": "registry/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "@lib/utils.ts"
+        },
+        {
+          "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/avatar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/badge.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/checkbox.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/command.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/label.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/popover.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/select.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/sheet.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/skeleton.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/switch.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/textarea.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/scripts/check-tokens.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/check-tokens.mjs"
+        },
+        {
+          "path": "registry/docs/DESIGN_SYSTEM.md",
+          "type": "registry:file",
+          "target": "~/DESIGN_SYSTEM.md"
+        },
+        {
+          "path": "registry/styles/tokens.css",
+          "type": "registry:file",
+          "target": "~/src/index.css"
+        }
+      ],
       "docs": "UI base installed. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs src\". Read DESIGN_SYSTEM.md before building screens. For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite"
     },
     {
@@ -534,34 +623,123 @@
       "type": "registry:item",
       "title": "UI base (Next.js)",
       "description": "Everything for a Next.js app: tokens, components, icon seam, utils, token check and the guide.",
-      "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/icon",
-        "wasimjalali/ui-base/avatar",
-        "wasimjalali/ui-base/badge",
-        "wasimjalali/ui-base/button",
-        "wasimjalali/ui-base/card",
-        "wasimjalali/ui-base/checkbox",
-        "wasimjalali/ui-base/command",
-        "wasimjalali/ui-base/dialog",
-        "wasimjalali/ui-base/dropdown-menu",
-        "wasimjalali/ui-base/input",
-        "wasimjalali/ui-base/label",
-        "wasimjalali/ui-base/popover",
-        "wasimjalali/ui-base/select",
-        "wasimjalali/ui-base/separator",
-        "wasimjalali/ui-base/sheet",
-        "wasimjalali/ui-base/skeleton",
-        "wasimjalali/ui-base/switch",
-        "wasimjalali/ui-base/textarea",
-        "wasimjalali/ui-base/toggle",
-        "wasimjalali/ui-base/toggle-group",
-        "wasimjalali/ui-base/tooltip",
-        "wasimjalali/ui-base/tokens-next",
-        "wasimjalali/ui-base/token-check",
-        "wasimjalali/ui-base/guide"
+      "dependencies": [
+        "clsx",
+        "tailwind-merge",
+        "lucide-react",
+        "radix-ui",
+        "class-variance-authority",
+        "cmdk",
+        "tw-animate-css",
+        "@fontsource-variable/geist",
+        "@fontsource-variable/geist-mono"
       ],
-      "files": [],
+      "files": [
+        {
+          "path": "registry/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "@lib/utils.ts"
+        },
+        {
+          "path": "registry/ui/icon.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/avatar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/badge.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/button.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/checkbox.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/command.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/label.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/popover.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/select.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/separator.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/sheet.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/skeleton.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/switch.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/textarea.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/toggle-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/scripts/check-tokens.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/check-tokens.mjs"
+        },
+        {
+          "path": "registry/docs/DESIGN_SYSTEM.md",
+          "type": "registry:file",
+          "target": "~/DESIGN_SYSTEM.md"
+        },
+        {
+          "path": "registry/styles/tokens.css",
+          "type": "registry:file",
+          "target": "~/app/globals.css"
+        }
+      ],
       "docs": "UI base installed. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs app components lib\". Read DESIGN_SYSTEM.md before building screens. For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite"
     }
   ]
