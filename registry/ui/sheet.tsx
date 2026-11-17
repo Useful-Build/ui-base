@@ -48,14 +48,17 @@ function SheetContent({
   children,
   side = "right",
   showCloseButton = true,
+  overlayProps,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left"
   showCloseButton?: boolean
+  /** Props for the scrim behind the sheet (its z-index or color, when a sheet sits over another layer). */
+  overlayProps?: React.ComponentProps<typeof SheetOverlay>
 }) {
   return (
     <SheetPortal>
-      <SheetOverlay />
+      <SheetOverlay {...overlayProps} />
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(

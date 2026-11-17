@@ -7,7 +7,7 @@
       "name": "utils",
       "type": "registry:lib",
       "title": "Utils",
-      "description": "cn(), with tailwind-merge taught the token file's text, weight, shadow and tracking scales.",
+      "description": "cn(), with tailwind-merge taught the token file's text, weight, shadow and tracking scales. It imports lib/merge-config.ts, which base and base-next install once and this item does not, so add that file by hand in an app that never installed base.",
       "dependencies": [
         "clsx",
         "tailwind-merge"
@@ -549,6 +549,11 @@
           "target": "@lib/utils.ts"
         },
         {
+          "path": "registry/lib/merge-config.ts",
+          "type": "registry:lib",
+          "target": "@lib/merge-config.ts"
+        },
+        {
           "path": "registry/ui/icon.tsx",
           "type": "registry:ui"
         },
@@ -685,6 +690,11 @@
           "target": "@lib/utils.ts"
         },
         {
+          "path": "registry/lib/merge-config.ts",
+          "type": "registry:lib",
+          "target": "@lib/merge-config.ts"
+        },
+        {
           "path": "registry/ui/icon.tsx",
           "type": "registry:ui"
         },
@@ -804,7 +814,7 @@
       "name": "update",
       "type": "registry:item",
       "title": "UI base update (Vite)",
-      "description": "Updates a Vite app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: src/index.css, components/ui/icon.tsx and scripts/check-tokens.allow.json.",
+      "description": "Updates a Vite app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: src/index.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -922,13 +932,13 @@
           "target": "~/src/ui-base.css"
         }
       ],
-      "docs": "UI base updated. The app-owned files were left alone: src/index.css, components/ui/icon.tsx and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing."
+      "docs": "UI base updated. The app-owned files were left alone: src/index.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing. An app coming from v1.0.0 must add lib/merge-config.ts before this update, or lib/utils.ts will not compile: see the v1.1.0 entry in CHANGELOG.md."
     },
     {
       "name": "update-next",
       "type": "registry:item",
       "title": "UI base update (Next.js)",
-      "description": "Updates a Next.js app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: app/globals.css, components/ui/icon.tsx and scripts/check-tokens.allow.json.",
+      "description": "Updates a Next.js app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: app/globals.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
@@ -1044,7 +1054,7 @@
           "target": "~/app/ui-base.css"
         }
       ],
-      "docs": "UI base updated. The app-owned files were left alone: app/globals.css, components/ui/icon.tsx and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing."
+      "docs": "UI base updated. The app-owned files were left alone: app/globals.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing. An app coming from v1.0.0 must add lib/merge-config.ts before this update, or lib/utils.ts will not compile: see the v1.1.0 entry in CHANGELOG.md."
     }
   ]
 }

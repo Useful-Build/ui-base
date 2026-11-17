@@ -104,6 +104,7 @@ app() {
     lib_utils=lib/utils.ts; page=app/page.tsx; check_dirs="app components lib"; art=lib/art-preview.ts; tsc="npx tsc --noEmit"
   fi
   local icon_tsx="$ui_dir/icon.tsx" icon_names="$ui_dir/icon-names.ts" allow=scripts/check-tokens.allow.json
+  local merge_config="$(dirname "$lib_utils")/merge-config.ts"
   local dir="$WORK/$kind-app" out="$VERIFY/$kind"
   mkdir -p "$out"
   export UI_ROUTES="$ROUTES"
@@ -117,6 +118,7 @@ app() {
   must "$kind-app-css-starter-installed" pass cmp "$ROOT/registry/styles/$starter" "$app_css"
   must "$kind-icon-names-installed" pass cmp "$ROOT/registry/ui/icon-names.ts" "$icon_names"
   must "$kind-allow-list-installed-empty" pass cmp "$ROOT/registry/scripts/check-tokens.allow.json" "$allow"
+  must "$kind-merge-config-installed" pass cmp "$ROOT/registry/lib/merge-config.ts" "$merge_config"
   cp "$HERE/fixtures/kitchen-sink.tsx" "$page"
   if [ "$kind" = next ]; then
     # A server component page (no "use client") importing client-only components must still build.
@@ -206,6 +208,19 @@ app() {
   # The icon seam is app-owned: an app that swapped its icon set must keep it.
   echo '// app icon set' >> "$icon_tsx"
   cp "$icon_tsx" "$WORK/icon.keep"
+  # The merge seam is app-owned too: an app that registered its own class names must keep them. This one registers a
+  # text size called hero; the merge-seam check below proves cn() reads it.
+  cat > "$merge_config" <<'EOT'
+import type { ConfigExtension } from 'tailwind-merge'
+
+export const appMergeConfig: ConfigExtension<string, string> = {
+  extend: {
+    theme: { text: ['hero'] },
+    classGroups: {},
+  },
+}
+EOT
+  cp "$merge_config" "$WORK/merge-config.keep"
   # Make base-owned files stale, so the update has to rewrite them.
   echo '/* stale */' >> "$ui_css"
   echo '// stale' >> e2e/ui/visual.spec.ts
@@ -216,6 +231,7 @@ app() {
   step "$kind-update-kept-routes" pass cmp "$WORK/routes.keep" e2e/ui/routes.ts
   step "$kind-update-kept-app-exclusion" pass sh -c "grep -qF \"selector: '[data-app-excluded]'\" e2e/ui/routes.ts && grep -qF \"MASKS: string[] = ['h1']\" e2e/ui/routes.ts"
   step "$kind-update-kept-icon" pass cmp "$WORK/icon.keep" "$icon_tsx"
+  step "$kind-update-kept-merge-config" pass cmp "$WORK/merge-config.keep" "$merge_config"
   step "$kind-update-kept-allow-list" pass cmp "$WORK/allow.keep" "$allow"
   step "$kind-update-rewrote-ui-base-css" pass cmp "$ROOT/registry/styles/ui-base.css" "$ui_css"
   step "$kind-update-rewrote-suite" pass cmp "$ROOT/registry/regression/e2e/ui/visual.spec.ts" e2e/ui/visual.spec.ts
@@ -226,6 +242,11 @@ app() {
 
   step "$kind-update-build" pass npm run build
   step "$kind-update-lint-tokens" pass npm run lint:tokens
+  # cn() must read the kept merge-config.ts: hero is a size, so a color next to it stays and another size goes.
+  cp "$HERE/fixtures/merge-seam.spec.ts" e2e/ui/zz-merge-seam.spec.ts
+  UI_OUT_DIR="$out/merge-seam" UTILS_PATH="$lib_utils" step "$kind-update-merge-seam-applies" pass npx playwright test -c playwright.ui.config.ts e2e/ui/zz-merge-seam.spec.ts --project=desktop
+  rm e2e/ui/zz-merge-seam.spec.ts
+  step "$kind-update-merge-seam-ran" pass grep -Eq '\b1 passed\b' "$VERIFY/logs/$kind-update-merge-seam-applies.log"
   # The allowed art still holds its literal, and the updated check still allows it.
   step "$kind-update-art-still-allowed" pass sh -c "grep -qF '#ff0000' '$art' && npm run lint:tokens"
   UI_OUT_DIR="$out/update" step "$kind-update-suite-visual-and-a11y" pass npx playwright test -c playwright.ui.config.ts
@@ -244,7 +265,7 @@ app() {
 }
 
 # App-owned files: installed once by the first-install items, never shipped by an update item.
-APP_OWNED="registry/ui/icon.tsx,registry/styles/app.css,registry/styles/app-next.css,registry/scripts/check-tokens.allow.json,registry/regression/e2e/ui/routes.ts"
+APP_OWNED="registry/ui/icon.tsx,registry/lib/merge-config.ts,registry/styles/app.css,registry/styles/app-next.css,registry/scripts/check-tokens.allow.json,registry/regression/e2e/ui/routes.ts"
 
 # Each update item must be its first-install item minus the app-owned files, with the same dependencies.
 bundles_consistent() {

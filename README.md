@@ -43,6 +43,7 @@ Anything an app is told to edit is app-owned: `base` or `base-next` (or `regress
 | `ui-base.css` (`src/` or `app/`): role tokens, Tailwind theme, base styles, helpers | base | rewritten |
 | `src/index.css` or `app/globals.css`: the app CSS file, with imports, then the app's `:root` and `.dark` overrides | app | left alone |
 | `components/ui/icon.tsx`: the icon seam, the app's map from icon names to its icon set | app | left alone |
+| `lib/merge-config.ts`: the class names of the app's own `--app-*` tokens, for `cn()` | app | left alone |
 | `components/ui/icon-names.ts`: every icon name the components use | base | rewritten |
 | `components/ui/` (every other file), `lib/utils.ts`, `scripts/check-tokens.mjs`, `DESIGN_SYSTEM.md` | base | rewritten |
 | `scripts/check-tokens.allow.json`: content art the token check allows | app | left alone |
@@ -56,17 +57,33 @@ The app CSS starter is frozen: a release never changes it, since every app owns 
 | Item | When | What it installs |
 |---|---|---|
 | `base`, `base-next` | first install | Everything below for Vite or Next.js, including the app CSS starter, except the regression suite |
-| `update`, `update-next` | updates | The same, minus the app-owned files: the app CSS starter, `icon.tsx` and `check-tokens.allow.json` |
+| `update`, `update-next` | updates | The same, minus the app-owned files: the app CSS starter, `icon.tsx`, `lib/merge-config.ts` and `check-tokens.allow.json` |
 | `regression-suite` | first install | `playwright.ui.config.ts` and `e2e/ui/` (visual and axe, light and dark, desktop and phone), including `routes.ts` |
 | `regression-suite-update` | updates | The same, minus `routes.ts` |
 | `tokens`, `tokens-next` | | `ui-base.css` alone, at `src/ui-base.css` or `app/ui-base.css` |
-| `utils` | | `lib/utils.ts`: `cn()` with tailwind-merge taught the token scales |
+| `utils` | | `lib/utils.ts`: `cn()` with tailwind-merge taught the token scales. It imports `lib/merge-config.ts`, which only `base` and `base-next` install |
 | `icon` | | `components/ui/icon.tsx`, the icon seam (lucide-react), and `components/ui/icon-names.ts` |
 | `avatar` `badge` `button` `card` `checkbox` `command` `dialog` `dropdown-menu` `input` `label` `popover` `select` `separator` `sheet` `skeleton` `switch` `textarea` `toggle` `toggle-group` `tooltip` | | One component each, in `components/ui/` |
 | `token-check` | | `scripts/check-tokens.mjs` (create `scripts/check-tokens.allow.json` yourself if you need it) |
 | `guide` | | `DESIGN_SYSTEM.md` |
 
 Single items install the same way: `npx shadcn@4.23.0 add wasimjalali/ui-base/dialog`. A single component item doesn't bring `ui-base.css` or the app CSS file, so install `base` or `base-next` first; without them the component's classes have no tokens. Don't add a single component item with `--overwrite` to an app that has the base: the items that render `Icon` (`checkbox`, `command`, `dialog`, `dropdown-menu`, `select` and `sheet`) pull in `icon` through `registryDependencies`, and `--overwrite` then replaces the app-owned `icon.tsx` too. Add single items without `--overwrite`, or update through the update items.
+
+A single component or `utils` added to an app that never installed `base` or `base-next` needs `lib/merge-config.ts` added by hand, because `utils` imports it and no single item ships it. Create it (`src/lib/merge-config.ts` for Vite, `lib/merge-config.ts` for Next.js) with this content:
+
+```ts
+import type { ConfigExtension } from 'tailwind-merge'
+
+// App-owned. List the class names of your own --app-* tokens here (text sizes, shadows, tracking, leading, radius,
+// animate, container and spacing names, extra class groups) so cn() doesn't drop them next to a base class. Installed
+// once, never updated.
+export const appMergeConfig: ConfigExtension<string, string> = {
+  extend: {
+    theme: {},
+    classGroups: {},
+  },
+}
+```
 
 ## Updating
 
@@ -78,7 +95,7 @@ npx shadcn@4.23.0 add wasimjalali/ui-base/update-next -y --overwrite            
 npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite   # if the app has the suite
 ```
 
-They rewrite the base-owned files and leave the app-owned ones alone: the app CSS file, `components/ui/icon.tsx`, `scripts/check-tokens.allow.json` and `routes.ts`. Read [CHANGELOG.md](CHANGELOG.md) for the release: it lists new icon names, new or deprecated tokens and anything app-owned you must touch. A new icon name lands in `icon-names.ts`, and your `icon.tsx` maps names with `satisfies Record<IconName, ...>`, so the type check fails right after the update until you map it. Then run the type check and `lint:tokens` and review the diff before committing. Pin a release with a tag or a full commit SHA: `wasimjalali/ui-base/update#v1.0.0`. The `base`, `update` and suite items (and their Next.js twins) carry all their files themselves, so a pinned ref installs exactly that version. Single component items depend on `utils`, `icon` and so on through `registryDependencies`, and the CLI resolves those from `main` whatever ref you pin (refs are not passed on to dependencies).
+They rewrite the base-owned files and leave the app-owned ones alone: the app CSS file, `components/ui/icon.tsx`, `lib/merge-config.ts`, `scripts/check-tokens.allow.json` and `routes.ts`. Read [CHANGELOG.md](CHANGELOG.md) for the release: it lists new icon names, new or deprecated tokens and anything app-owned you must touch. A new icon name lands in `icon-names.ts`, and your `icon.tsx` maps names with `satisfies Record<IconName, ...>`, so the type check fails right after the update until you map it. Then run the type check and `lint:tokens` and review the diff before committing. Pin a release with a tag or a full commit SHA: `wasimjalali/ui-base/update#v1.0.0`. The `base`, `update` and suite items (and their Next.js twins) carry all their files themselves, so a pinned ref installs exactly that version. Single component items depend on `utils`, `icon` and so on through `registryDependencies`, and the CLI resolves those from `main` whatever ref you pin (refs are not passed on to dependencies).
 
 ## Restyling an app
 

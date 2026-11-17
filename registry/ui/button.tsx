@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-primary-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-card text-foreground hover:bg-accent",
+        outline: "border border-input bg-card text-foreground hover:bg-accent aria-pressed:bg-fill-hover",
         secondary: "border border-border bg-secondary text-secondary-foreground hover:bg-fill-hover",
         soft: "bg-fill text-foreground hover:bg-fill-hover",
         ghost: "text-foreground-3 hover:text-foreground",
@@ -19,11 +19,15 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-8 px-[13px]",
+        // A 22px pill, for a small control inside a larger one.
+        xs: "h-5.5 gap-0.75 rounded-full pr-2.25 pl-1.5 text-xs",
         sm: "h-7 gap-1 px-2.5 text-xs",
         lg: "h-9.5 rounded-lg px-[15px] text-base",
         icon: "size-8 rounded-lg",
         "icon-sm": "size-7 rounded-lg",
         "icon-lg": "size-9 rounded-lg",
+        // A floating round button.
+        "icon-round": "size-9 rounded-full shadow-float",
       },
     },
     compoundVariants: [
