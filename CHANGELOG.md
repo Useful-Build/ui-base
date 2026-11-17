@@ -13,6 +13,17 @@ Rules every release follows:
 - **App-owned files never ship in an update item.** Anything an app is told to edit is installed once by `base`, `base-next` or `regression-suite`.
 - **Newly adopted components are named here.** A component an app added from upstream shadcn is the app's own until ui-base adopts it. The release that adopts one names it, since the update then rewrites the app's copy: review that file's diff.
 
+## v1.1.0 (2026-11-17)
+
+- **Button:** sizes `xs` and `icon-round`. The `outline` variant shows the hover fill while `aria-pressed` is true.
+- **Badge:** a `size` variant (`default`, `lg`, `md`; `default` renders what it did before) and variants `warning`, `brand`, `muted` and `status`.
+- **Input:** a `size` of `default` or `sm`. **Breaking type change:** the native `size` attribute is no longer part of its props.
+- **Sheet:** `SheetContent` takes `overlayProps`, like `Dialog`.
+- **Merge seam:** `lib/utils.ts` now merges `appMergeConfig` from the new app-owned `lib/merge-config.ts`, where an app lists the class names of its own `--app-*` tokens so `cn()` keeps them. Empty by default, so `cn()` behaves as before.
+- **Icon names:** none.
+- **Tokens:** none.
+- **App-owned files to touch:** an app on v1.0.0 must add `lib/merge-config.ts` before it runs the update, or `lib/utils.ts` won't compile. Copy it from the registry (`registry/lib/merge-config.ts`, next to `utils.ts`). New installs get it from `base` and `base-next`; updates never ship it. An app that passes `size` to `Input` as the native attribute must remove it.
+
 ## v1.0.0 (2026-11-16)
 
 First release.

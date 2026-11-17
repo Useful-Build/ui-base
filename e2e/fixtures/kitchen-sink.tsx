@@ -137,7 +137,7 @@ function SheetDemo({ open }: { open?: boolean }) {
   return (
     <Sheet defaultOpen={open}>
       <SheetTrigger asChild><Button variant="outline">Open sheet</Button></SheetTrigger>
-      <SheetContent>
+      <SheetContent overlayProps={{ className: "z-50" }}>
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>Changes save when you press Save.</SheetDescription>
@@ -209,7 +209,10 @@ function Gallery() {
         <Button variant="destructive">Delete</Button>
         <Button size="sm">Small</Button>
         <Button size="lg">Large</Button>
+        <Button size="xs">Extra small</Button>
+        <Button variant="outline" aria-pressed="true">Pressed</Button>
         <Button size="icon" variant="ghost" aria-label="Search"><Icon name="search" /></Button>
+        <Button size="icon-round" variant="outline" aria-label="Search again"><Icon name="search" /></Button>
         <Button disabled>Disabled</Button>
       </Section>
 
@@ -218,6 +221,12 @@ function Gallery() {
         <Badge variant="secondary">Secondary</Badge>
         <Badge variant="destructive">Failed</Badge>
         <Badge variant="outline">Outline</Badge>
+        <Badge variant="warning">Warning</Badge>
+        <Badge variant="brand">Brand</Badge>
+        <Badge variant="muted">Muted</Badge>
+        <Badge variant="status">Status</Badge>
+        <Badge size="lg">Large</Badge>
+        <Badge size="md" variant="secondary">Medium</Badge>
       </Section>
 
       <Section title="Fields">
@@ -225,6 +234,10 @@ function Gallery() {
           <div className="flex w-full max-w-sm flex-col gap-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" placeholder="you@example.com" />
+          </div>
+          <div className="flex w-full max-w-sm flex-col gap-2">
+            <Label htmlFor="rename">Rename</Label>
+            <Input id="rename" size="sm" defaultValue="Spring launch" />
           </div>
           <div className="flex w-full max-w-sm flex-col gap-2">
             <Label htmlFor="notes">Notes</Label>
