@@ -4,7 +4,7 @@ Read the entry for a release before you run `update`, `update-next` or `regressi
 
 - **Icon names:** names added to `components/ui/icon-names.ts`. Map each one in your `components/ui/icon.tsx`; the type check fails until you do.
 - **Tokens:** tokens added, and tokens deprecated in favor of a new name.
-- **App-owned files to touch:** anything in the app CSS file, `icon.tsx`, `scripts/check-tokens.allow.json` or `e2e/ui/routes.ts` the app must change by hand, since updates never ship those files.
+- **App-owned files to touch:** anything in the app CSS file, `icon.tsx`, `lib/merge-config.ts`, `scripts/check-tokens.allow.json` or `e2e/ui/routes.ts` the app must change by hand, since updates never ship those files.
 
 Rules every release follows:
 
@@ -22,7 +22,23 @@ Rules every release follows:
 - **Merge seam:** `lib/utils.ts` now merges `appMergeConfig` from the new app-owned `lib/merge-config.ts`, where an app lists the class names of its own `--app-*` tokens so `cn()` keeps them. Empty by default, so `cn()` behaves as before.
 - **Icon names:** none.
 - **Tokens:** none.
-- **App-owned files to touch:** an app on v1.0.0 must add `lib/merge-config.ts` before it runs the update, or `lib/utils.ts` won't compile. Copy it from the registry (`registry/lib/merge-config.ts`, next to `utils.ts`). New installs get it from `base` and `base-next`; updates never ship it. An app that passes `size` to `Input` as the native attribute must remove it.
+- **App-owned files to touch:** an app on v1.0.0 must add `lib/merge-config.ts` before it runs the update, or `lib/utils.ts` won't compile. Create `src/lib/merge-config.ts` (Vite) or `lib/merge-config.ts` (Next.js), next to `utils.ts`, with this content:
+
+```ts
+import type { ConfigExtension } from 'tailwind-merge'
+
+// App-owned. List the class names of your own --app-* tokens here (text sizes, shadows, tracking, leading, radius,
+// animate, container and spacing names, extra class groups) so cn() doesn't drop them next to a base class. Installed
+// once, never updated.
+export const appMergeConfig: ConfigExtension<string, string> = {
+  extend: {
+    theme: {},
+    classGroups: {},
+  },
+}
+```
+
+New installs get it from `base` and `base-next`; updates never ship it. An app that passes `size` to `Input` as the native attribute must remove it.
 
 ## v1.0.0 (2026-11-16)
 

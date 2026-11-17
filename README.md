@@ -61,13 +61,29 @@ The app CSS starter is frozen: a release never changes it, since every app owns 
 | `regression-suite` | first install | `playwright.ui.config.ts` and `e2e/ui/` (visual and axe, light and dark, desktop and phone), including `routes.ts` |
 | `regression-suite-update` | updates | The same, minus `routes.ts` |
 | `tokens`, `tokens-next` | | `ui-base.css` alone, at `src/ui-base.css` or `app/ui-base.css` |
-| `utils` | | `lib/utils.ts`: `cn()` with tailwind-merge taught the token scales |
+| `utils` | | `lib/utils.ts`: `cn()` with tailwind-merge taught the token scales. It imports `lib/merge-config.ts`, which only `base` and `base-next` install |
 | `icon` | | `components/ui/icon.tsx`, the icon seam (lucide-react), and `components/ui/icon-names.ts` |
 | `avatar` `badge` `button` `card` `checkbox` `command` `dialog` `dropdown-menu` `input` `label` `popover` `select` `separator` `sheet` `skeleton` `switch` `textarea` `toggle` `toggle-group` `tooltip` | | One component each, in `components/ui/` |
 | `token-check` | | `scripts/check-tokens.mjs` (create `scripts/check-tokens.allow.json` yourself if you need it) |
 | `guide` | | `DESIGN_SYSTEM.md` |
 
-Single items install the same way: `npx shadcn@4.23.0 add wasimjalali/ui-base/dialog`. A single component item doesn't bring `ui-base.css` or the app CSS file, so install `base` or `base-next` first; without them the component's classes have no tokens. Don't add a single component item with `--overwrite` to an app that has the base: the items that render `Icon` (`checkbox`, `command`, `dialog`, `dropdown-menu`, `select` and `sheet`) pull in `icon` through `registryDependencies`, and `--overwrite` then replaces the app-owned `icon.tsx` too. Every component pulls in `utils`, which ships `merge-config.ts`, so it resets that file as well. Add single items without `--overwrite`, or update through the update items.
+Single items install the same way: `npx shadcn@4.23.0 add wasimjalali/ui-base/dialog`. A single component item doesn't bring `ui-base.css` or the app CSS file, so install `base` or `base-next` first; without them the component's classes have no tokens. Don't add a single component item with `--overwrite` to an app that has the base: the items that render `Icon` (`checkbox`, `command`, `dialog`, `dropdown-menu`, `select` and `sheet`) pull in `icon` through `registryDependencies`, and `--overwrite` then replaces the app-owned `icon.tsx` too. Add single items without `--overwrite`, or update through the update items.
+
+A single component or `utils` added to an app that never installed `base` or `base-next` needs `lib/merge-config.ts` added by hand, because `utils` imports it and no single item ships it. Create it (`src/lib/merge-config.ts` for Vite, `lib/merge-config.ts` for Next.js) with this content:
+
+```ts
+import type { ConfigExtension } from 'tailwind-merge'
+
+// App-owned. List the class names of your own --app-* tokens here (text sizes, shadows, tracking, leading, radius,
+// animate, container and spacing names, extra class groups) so cn() doesn't drop them next to a base class. Installed
+// once, never updated.
+export const appMergeConfig: ConfigExtension<string, string> = {
+  extend: {
+    theme: {},
+    classGroups: {},
+  },
+}
+```
 
 ## Updating
 

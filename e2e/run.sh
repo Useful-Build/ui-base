@@ -208,8 +208,18 @@ app() {
   # The icon seam is app-owned: an app that swapped its icon set must keep it.
   echo '// app icon set' >> "$icon_tsx"
   cp "$icon_tsx" "$WORK/icon.keep"
-  # The merge seam is app-owned too: an app that listed its own class names must keep them.
-  echo '// app merge config' >> "$merge_config"
+  # The merge seam is app-owned too: an app that registered its own class names must keep them. This one registers a
+  # text size called hero; the merge-seam check below proves cn() reads it.
+  cat > "$merge_config" <<'EOT'
+import type { ConfigExtension } from 'tailwind-merge'
+
+export const appMergeConfig: ConfigExtension<string, string> = {
+  extend: {
+    theme: { text: ['hero'] },
+    classGroups: {},
+  },
+}
+EOT
   cp "$merge_config" "$WORK/merge-config.keep"
   # Make base-owned files stale, so the update has to rewrite them.
   echo '/* stale */' >> "$ui_css"
@@ -232,6 +242,11 @@ app() {
 
   step "$kind-update-build" pass npm run build
   step "$kind-update-lint-tokens" pass npm run lint:tokens
+  # cn() must read the kept merge-config.ts: hero is a size, so a color next to it stays and another size goes.
+  cp "$HERE/fixtures/merge-seam.spec.ts" e2e/ui/zz-merge-seam.spec.ts
+  UI_OUT_DIR="$out/merge-seam" UTILS_PATH="$lib_utils" step "$kind-update-merge-seam-applies" pass npx playwright test -c playwright.ui.config.ts e2e/ui/zz-merge-seam.spec.ts --project=desktop
+  rm e2e/ui/zz-merge-seam.spec.ts
+  step "$kind-update-merge-seam-ran" pass grep -Eq '\b1 passed\b' "$VERIFY/logs/$kind-update-merge-seam-applies.log"
   # The allowed art still holds its literal, and the updated check still allows it.
   step "$kind-update-art-still-allowed" pass sh -c "grep -qF '#ff0000' '$art' && npm run lint:tokens"
   UI_OUT_DIR="$out/update" step "$kind-update-suite-visual-and-a11y" pass npx playwright test -c playwright.ui.config.ts

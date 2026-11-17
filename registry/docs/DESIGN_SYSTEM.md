@@ -17,7 +17,7 @@ The rule behind the split: anything an app is told to edit is app-owned, install
 
 | File | Owner | On update |
 |---|---|---|
-| `ui-base.css`, `components/ui/` (except `icon.tsx`), `components/ui/icon-names.ts`, `lib/utils.ts` (except `lib/merge-config.ts`), `scripts/check-tokens.mjs`, this guide | base | rewritten |
+| `ui-base.css`, `components/ui/` (except `icon.tsx`), `components/ui/icon-names.ts`, `lib/utils.ts`, `scripts/check-tokens.mjs`, this guide | base | rewritten |
 | The app CSS file (`src/index.css` or `app/globals.css`) | app | left alone |
 | `components/ui/icon.tsx` | app | left alone |
 | `lib/merge-config.ts` | app | left alone |
@@ -97,7 +97,7 @@ Every app starts from the same tokens and components. To give it its own look:
 1. **Override token values** in the app CSS file (`src/index.css` or `app/globals.css`), after the `ui-base.css` import: colors, `--radius`, shadows. Set every token you override in both blocks, `:root` for light and `.dark` for dark: a token set only in `:root` leaks into dark mode, since the app CSS file loads after `ui-base.css`. Keep the names; only tokens `ui-base.css` defines can be overridden. Every component follows. Never edit `ui-base.css`.
 2. **Don't edit `components/ui/`.** It's base-owned, so an update rewrites it. An app-specific variant lives in an app component composed from `components/ui` (a `PlanBadge` that wraps `Badge` with its own classes, say). A variant every app should have goes to ui-base, in a release.
 3. **Never hard-code** a color, size or shadow in a screen. If no token fits, add an app-only token to the app CSS file, named with the `--app-` prefix, in both `:root` and `.dark`. Map it in an `@theme inline` block there (`--color-app-name: var(--app-name);`) and use it through its class (`bg-app-name`). `lint:tokens` fails on an override of any other name `ui-base.css` doesn't define, so a renamed or mistyped token can't silently drop an override.
-4. **List your `--app-*` class names in `lib/merge-config.ts`.** `cn()` runs tailwind-merge, which has to know a class name belongs to a scale or it reads it as something else and drops the wrong class when two meet. `lib/utils.ts` teaches it the base's names. An app that adds its own text sizes, shadows, tracking, leading, radius, animate, container or spacing names, or its own class groups, lists them in `appMergeConfig` (`{ extend: { theme: {...}, classGroups: {...} } }`). It's app-owned: installed once, merged after the base's own names, never updated. Never edit `lib/utils.ts` for this.
+4. **List your `--app-*` class names in `lib/merge-config.ts`.** `cn()` runs tailwind-merge, which has to know a class name belongs to a scale or it reads it as something else and drops the wrong class when two meet. `lib/utils.ts` teaches it the base's names. An app that adds its own text sizes, shadows, tracking, leading, radius, animate, container or spacing names, or its own class groups, lists them in `appMergeConfig` (`{ extend: { theme: {...}, classGroups: {...} } }`). It's app-owned: installed once by `base` and `base-next`, merged after the base's own names, never updated. Never edit `lib/utils.ts` for this.
 
 ## Updating
 
@@ -109,7 +109,7 @@ Update with the `update` items, never with `base` again (that resets the app CSS
 
 They rewrite the base-owned files: `ui-base.css`, `components/ui/` (except `icon.tsx`), `icon-names.ts`, `lib/utils.ts`, the token check, this guide and the suite's own files. The app-owned files stay as they are: the app CSS file, `icon.tsx`, `lib/merge-config.ts`, `scripts/check-tokens.allow.json` and `e2e/ui/routes.ts`. Read the release's entry in ui-base's `CHANGELOG.md` for new icon names, new or deprecated tokens and anything app-owned to touch, then run the type check and `lint:tokens` and review the diff before committing.
 
-Don't add a single component item with `--overwrite`: the items that render `Icon` (`checkbox`, `command`, `dialog`, `dropdown-menu`, `select` and `sheet`) pull in `icon` and `utils` through `registryDependencies` and would replace your `icon.tsx` and `lib/merge-config.ts`. Use the update items, or add single items without `--overwrite`.
+Don't add a single component item with `--overwrite`: the items that render `Icon` (`checkbox`, `command`, `dialog`, `dropdown-menu`, `select` and `sheet`) pull in `icon` through `registryDependencies` and would replace your `icon.tsx`. Use the update items, or add single items without `--overwrite`. A single component or `utils` added to an app that never installed `base` or `base-next` needs `lib/merge-config.ts` added by hand: `utils` imports it and no single item ships it. The content is in the v1.1.0 entry of ui-base's `CHANGELOG.md`.
 
 ## Dark mode
 
