@@ -1,0 +1,45 @@
+# CI for the registry: runs e2e/run.sh, which installs the registry from GitHub (shadcn add Useful-Build/ui-base/...#<sha>)
+# into fresh Vite and Next.js apps. That needs the repo to be public (or a GH_TOKEN with read access).
+# Adapted from the standard web-app template: no package.json here, so no typecheck, lint or build jobs.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  # A new push cancels the branch's old run. Runs on main always finish, so each merge keeps a record.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install Playwright system dependencies
+        run: npx -y playwright@latest install-deps chromium
+      # The ref must be a commit on GitHub. On a pull request the checkout is a merge commit that was never pushed.
+      # A pull request from a fork has its head commit in the fork, so the install fails: open it from a branch here.
+      - name: Run e2e/run.sh
+        env:
+          REF: ${{ github.event.pull_request.head.sha || github.sha }}
+          VERIFY_DIR: ${{ github.workspace }}/verify/e2e
+          GH_TOKEN: ${{ github.token }}
+        run: bash e2e/run.sh "$REF"
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: e2e-verify
+          path: verify/e2e/
+          retention-days: 7
