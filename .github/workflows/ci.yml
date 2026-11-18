@@ -30,6 +30,7 @@ jobs:
       - name: Install Playwright system dependencies
         run: npx -y playwright@latest install-deps chromium
       # The ref must be a commit on GitHub. On a pull request the checkout is a merge commit that was never pushed.
+      # A pull request from a fork has its head commit in the fork, so the install fails: open it from a branch here.
       - name: Run e2e/run.sh
         env:
           REF: ${{ github.event.pull_request.head.sha || github.sha }}

@@ -1,6 +1,6 @@
 # ui-base
 
-The shared UI base for every new app, Next.js or Vite: a token file, an app CSS starter, 20 restyled shadcn/ui components (Radix base, Tailwind v4), an icon seam, a token check, a design system guide and a Playwright regression suite. It's a private shadcn [GitHub registry](https://ui.shadcn.com/docs/registry/github): `registry.json` at the root lists every item, and the sources live in `registry/`. Inhouse is the reference app.
+The shared UI base for every new app, Next.js or Vite: a token file, an app CSS starter, 20 restyled shadcn/ui components (Radix base, Tailwind v4), an icon seam, a token check, a design system guide and a Playwright regression suite. It's a public shadcn [GitHub registry](https://ui.shadcn.com/docs/registry/github): `registry.json` at the root lists every item, and the sources live in `registry/`. Inhouse is the reference app.
 
 ## Install
 
@@ -105,17 +105,14 @@ Override token values in the app CSS file (`src/index.css` or `app/globals.css`)
 
 Each release has an entry in [CHANGELOG.md](CHANGELOG.md): new icon names, new, deprecated or renamed tokens and anything app-owned an app must touch. Tokens are never renamed outright: a release adds the new name as an alias of the old one (`--new: var(--old);`, in both `:root` and `.dark` of `ui-base.css`) for at least one release. Components read the new name, which follows the old one, so an app's override of either name still reaches them.
 
-## Private access
+## Access
 
-The repo is private. The shadcn CLI reads it with your GitHub credentials:
-
-- **Locally:** `gh auth login` once. The CLI uses the GitHub CLI's credentials and prints `Using gh credentials.`
-- **CI and cloud sessions:** set `GH_TOKEN` to a fine-grained personal access token scoped to `Useful-Build/ui-base` with **Contents: Read-only**. Keep it in the platform's secret store, never in a file.
+The repo is public, so the shadcn CLI reads it without credentials. If GitHub's API rate limit gets in the way, the CLI uses `gh` credentials when you're signed in, or a `GH_TOKEN` in CI.
 
 ## Working on the registry
 
 - `npx shadcn@4.23.0 registry validate` checks `registry.json` and every source file.
-- `e2e/run.sh <ref>` is the end-to-end proof: it validates the registry at a pushed ref, installs it into fresh Vite and Next.js apps, renders the kitchen sink in `e2e/fixtures/`, builds (Next.js also builds a server component page that renders every component), runs the token check and the regression suite (twice), and checks that a new icon name, a hard-coded color, an unknown token override and a changed token all fail for the right reason. Then it overrides the brand, adds a route, an axe exclusion and a screenshot mask, and allows a piece of content art, runs the update items and checks that the app-owned files survive byte for byte, the stale base-owned files are rewritten and the suite still passes. Before any of that it checks that each update item is its first-install item minus the app-owned files, with the same dependencies, and runs the token check against the fixtures in `e2e/fixtures/tokens/`. Run it through `~/.agents/tools/heavy-lock.sh` on the Mac.
+- `e2e/run.sh <ref>` is the end-to-end proof: it validates the registry at a pushed ref, installs it into fresh Vite and Next.js apps, renders the kitchen sink in `e2e/fixtures/`, builds (Next.js also builds a server component page that renders every component), runs the token check and the regression suite (twice), and checks that a new icon name, a hard-coded color, an unknown token override and a changed token all fail for the right reason. Then it overrides the brand, adds a route, an axe exclusion and a screenshot mask, and allows a piece of content art, runs the update items and checks that the app-owned files survive byte for byte, the stale base-owned files are rewritten and the suite still passes. Before any of that it checks that each update item is its first-install item minus the app-owned files, with the same dependencies, and runs the token check against the fixtures in `e2e/fixtures/tokens/`. CI runs it on every pull request.
 
 ## License
 

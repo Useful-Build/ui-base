@@ -1,6 +1,6 @@
 # Design system
 
-This app runs on [shadcn/ui](https://ui.shadcn.com) (Radix base) and Tailwind v4, installed from the private `Useful-Build/ui-base` registry. The look comes from the base's token file, the app's own overrides and a set of restyled components.
+This app runs on [shadcn/ui](https://ui.shadcn.com) (Radix base) and Tailwind v4, installed from the `Useful-Build/ui-base` registry. The look comes from the base's token file, the app's own overrides and a set of restyled components.
 
 ## Layers
 
