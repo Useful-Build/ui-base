@@ -1,6 +1,6 @@
 # Design system
 
-This app runs on [shadcn/ui](https://ui.shadcn.com) (Radix base) and Tailwind v4, installed from the private `wasimjalali/ui-base` registry. The look comes from the base's token file, the app's own overrides and a set of restyled components.
+This app runs on [shadcn/ui](https://ui.shadcn.com) (Radix base) and Tailwind v4, installed from the private `Useful-Build/ui-base` registry. The look comes from the base's token file, the app's own overrides and a set of restyled components.
 
 ## Layers
 
@@ -103,9 +103,9 @@ Every app starts from the same tokens and components. To give it its own look:
 
 Update with the `update` items, never with `base` again (that resets the app CSS file):
 
-- Vite: `npx shadcn@4.23.0 add wasimjalali/ui-base/update -y --overwrite`
-- Next.js: `npx shadcn@4.23.0 add wasimjalali/ui-base/update-next -y --overwrite`
-- Regression suite: `npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite`
+- Vite: `npx shadcn@4.23.0 add Useful-Build/ui-base/update -y --overwrite`
+- Next.js: `npx shadcn@4.23.0 add Useful-Build/ui-base/update-next -y --overwrite`
+- Regression suite: `npx shadcn@4.23.0 add Useful-Build/ui-base/regression-suite-update -y --overwrite`
 
 They rewrite the base-owned files: `ui-base.css`, `components/ui/` (except `icon.tsx`), `icon-names.ts`, `lib/utils.ts`, the token check, this guide and the suite's own files. The app-owned files stay as they are: the app CSS file, `icon.tsx`, `lib/merge-config.ts`, `scripts/check-tokens.allow.json` and `e2e/ui/routes.ts`. Read the release's entry in ui-base's `CHANGELOG.md` for new icon names, new or deprecated tokens and anything app-owned to touch, then run the type check and `lint:tokens` and review the diff before committing.
 
@@ -118,4 +118,4 @@ The tokens switch on a `dark` class on `<html>`. In Vite, the template's `ThemeP
 ## Checks
 
 - **`npm run lint:tokens`** runs `scripts/check-tokens.mjs`, which fails on any hex, color function, named CSS color or stock Tailwind palette class outside `ui-base.css` and the app CSS file. Comments are skipped. For a see-through token use an opacity modifier (`bg-brand/50`) or `color-mix(in oklab, var(--brand) 50%, transparent)`; tokens hold hex values, so `rgb(var(--brand) / 0.5)` is invalid CSS. A color function is fine when every channel is a `var()`, or a channel keyword of a relative color from a token (`rgb(from var(--brand) r g b / 50%)`); a number or percentage only as the alpha after the slash, and percentage weights in `color-mix`. Named colors count wherever they're a value: CSS declarations, Tailwind arbitrary values (`shadow-[0_1px_black]`) and style objects. It also fails when the app CSS file's `:root` or `.dark` blocks set a `--name` that `ui-base.css` doesn't define, unless it starts with `--app-`. Add it to `package.json`: `"lint:tokens": "node scripts/check-tokens.mjs src"` (Next.js: `app components lib`). Content art that is a picture rather than UI goes in the app's own `scripts/check-tokens.allow.json`, a JSON array of paths relative to the project root (`["src/art/file-preview.tsx"]`). Never edit the script itself: it's base-owned.
-- **The regression suite** (`npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite`) adds `playwright.ui.config.ts` and `e2e/ui/`; run it with `npx playwright test -c playwright.ui.config.ts`. The config has its own name, so it never overwrites the app's `playwright.config.ts`. It takes a screenshot of every route in `e2e/ui/routes.ts` in light and dark, on desktop and phone, and runs axe (WCAG 2.1 AA) on each. A shot fails past 100 changed pixels. The first run writes the baselines; commit them, and update them on purpose with `--update-snapshots` when a change is meant to show. Baselines are per OS (the file name ends in `darwin` or `linux`), so CI writes and commits its own on its OS once. The app's own known axe issues go in `routes.ts` as `AXE_EXCLUDE` (each skips one rule inside one selector, with a `why`), and content that changes between runs (a clock, a live feed) goes in `MASKS`, selectors covered in every shot. Both start empty. Update the suite with `regression-suite-update`, which leaves `routes.ts` alone.
+- **The regression suite** (`npx shadcn@4.23.0 add Useful-Build/ui-base/regression-suite`) adds `playwright.ui.config.ts` and `e2e/ui/`; run it with `npx playwright test -c playwright.ui.config.ts`. The config has its own name, so it never overwrites the app's `playwright.config.ts`. It takes a screenshot of every route in `e2e/ui/routes.ts` in light and dark, on desktop and phone, and runs axe (WCAG 2.1 AA) on each. A shot fails past 100 changed pixels. The first run writes the baselines; commit them, and update them on purpose with `--update-snapshots` when a change is meant to show. Baselines are per OS (the file name ends in `darwin` or `linux`), so CI writes and commits its own on its OS once. The app's own known axe issues go in `routes.ts` as `AXE_EXCLUDE` (each skips one rule inside one selector, with a `why`), and content that changes between runs (a clock, a live feed) goes in `MASKS`, selectors covered in every shot. Both start empty. Update the suite with `regression-suite-update`, which leaves `routes.ts` alone.

@@ -11,7 +11,7 @@ set -uo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
-REPO="wasimjalali/ui-base"
+REPO="Useful-Build/ui-base"
 REF="${1:-$(git -C "$ROOT" rev-parse HEAD)}"
 SHADCN=(npx -y shadcn@4.23.0)
 VERIFY="${VERIFY_DIR:-$ROOT/verify/e2e}"

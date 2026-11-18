@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "ui-base",
-  "homepage": "https://github.com/wasimjalali/ui-base",
+  "homepage": "https://github.com/Useful-Build/ui-base",
   "items": [
     {
       "name": "utils",
@@ -29,7 +29,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -51,7 +51,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -70,7 +70,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -89,7 +89,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -104,7 +104,7 @@
       "title": "Card",
       "description": "Card, restyled with the role tokens.",
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -122,8 +122,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/icon"
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/icon"
       ],
       "files": [
         {
@@ -141,9 +141,9 @@
         "cmdk"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/dialog",
-        "wasimjalali/ui-base/icon"
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/dialog",
+        "Useful-Build/ui-base/icon"
       ],
       "files": [
         {
@@ -161,9 +161,9 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/button",
-        "wasimjalali/ui-base/icon"
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/button",
+        "Useful-Build/ui-base/icon"
       ],
       "files": [
         {
@@ -181,8 +181,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/icon"
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/icon"
       ],
       "files": [
         {
@@ -197,7 +197,7 @@
       "title": "Input",
       "description": "Input, restyled with the role tokens.",
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -215,7 +215,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -233,7 +233,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -251,8 +251,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/icon"
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/icon"
       ],
       "files": [
         {
@@ -270,7 +270,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -288,8 +288,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/icon"
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/icon"
       ],
       "files": [
         {
@@ -304,7 +304,7 @@
       "title": "Skeleton",
       "description": "Skeleton, restyled with the role tokens.",
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -322,7 +322,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -337,7 +337,7 @@
       "title": "Textarea",
       "description": "Textarea, restyled with the role tokens.",
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -356,7 +356,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -375,8 +375,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils",
-        "wasimjalali/ui-base/toggle"
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/toggle"
       ],
       "files": [
         {
@@ -394,7 +394,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "wasimjalali/ui-base/utils"
+        "Useful-Build/ui-base/utils"
       ],
       "files": [
         {
@@ -491,7 +491,7 @@
           "target": "~/e2e/ui/a11y.spec.ts"
         }
       ],
-      "docs": "UI suite added. Install the browser once with `npx playwright install chromium`, list your routes in e2e/ui/routes.ts, then run `npx playwright test -c playwright.ui.config.ts`. The first run writes the baselines for this OS; commit them. Later updates: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite-update -y --overwrite (it leaves e2e/ui/routes.ts alone)."
+      "docs": "UI suite added. Install the browser once with `npx playwright install chromium`, list your routes in e2e/ui/routes.ts, then run `npx playwright test -c playwright.ui.config.ts`. The first run writes the baselines for this OS; commit them. Later updates: npx shadcn@4.23.0 add Useful-Build/ui-base/regression-suite-update -y --overwrite (it leaves e2e/ui/routes.ts alone)."
     },
     {
       "name": "regression-suite-update",
@@ -667,7 +667,7 @@
           "target": "~/src/index.css"
         }
       ],
-      "docs": "UI base installed. Restyle the app in src/index.css (its override block); never edit src/ui-base.css. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs src\". Read DESIGN_SYSTEM.md before building screens. To update later, add wasimjalali/ui-base/update, never base again (base resets src/index.css). For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite -y --overwrite"
+      "docs": "UI base installed. Restyle the app in src/index.css (its override block); never edit src/ui-base.css. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs src\". Read DESIGN_SYSTEM.md before building screens. To update later, add Useful-Build/ui-base/update, never base again (base resets src/index.css). For the UI regression suite: npx shadcn@4.23.0 add Useful-Build/ui-base/regression-suite -y --overwrite"
     },
     {
       "name": "base-next",
@@ -808,7 +808,7 @@
           "target": "~/app/globals.css"
         }
       ],
-      "docs": "UI base installed. Restyle the app in app/globals.css (its override block); never edit app/ui-base.css. Keep next/font in app/layout.tsx: it supplies Geist and Geist Mono. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs app components lib\". Read DESIGN_SYSTEM.md before building screens. To update later, add wasimjalali/ui-base/update-next, never base-next again (base-next resets app/globals.css). For the UI regression suite: npx shadcn@4.23.0 add wasimjalali/ui-base/regression-suite -y --overwrite"
+      "docs": "UI base installed. Restyle the app in app/globals.css (its override block); never edit app/ui-base.css. Keep next/font in app/layout.tsx: it supplies Geist and Geist Mono. Add this script to package.json: \"lint:tokens\": \"node scripts/check-tokens.mjs app components lib\". Read DESIGN_SYSTEM.md before building screens. To update later, add Useful-Build/ui-base/update-next, never base-next again (base-next resets app/globals.css). For the UI regression suite: npx shadcn@4.23.0 add Useful-Build/ui-base/regression-suite -y --overwrite"
     },
     {
       "name": "update",
@@ -932,7 +932,7 @@
           "target": "~/src/ui-base.css"
         }
       ],
-      "docs": "UI base updated. The app-owned files were left alone: src/index.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing. An app coming from v1.0.0 must add lib/merge-config.ts before this update, or lib/utils.ts will not compile: see the v1.1.0 entry in CHANGELOG.md."
+      "docs": "UI base updated. The app-owned files were left alone: src/index.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/Useful-Build/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing. An app coming from v1.0.0 must add lib/merge-config.ts before this update, or lib/utils.ts will not compile: see the v1.1.0 entry in CHANGELOG.md."
     },
     {
       "name": "update-next",
@@ -1054,7 +1054,7 @@
           "target": "~/app/ui-base.css"
         }
       ],
-      "docs": "UI base updated. The app-owned files were left alone: app/globals.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/wasimjalali/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing. An app coming from v1.0.0 must add lib/merge-config.ts before this update, or lib/utils.ts will not compile: see the v1.1.0 entry in CHANGELOG.md."
+      "docs": "UI base updated. The app-owned files were left alone: app/globals.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Read the release's CHANGELOG.md (https://github.com/Useful-Build/ui-base/blob/main/CHANGELOG.md) for new icon names to map in icon.tsx, new or deprecated tokens and anything else the app must touch, then run the type check and lint:tokens and review the diff before committing. An app coming from v1.0.0 must add lib/merge-config.ts before this update, or lib/utils.ts will not compile: see the v1.1.0 entry in CHANGELOG.md."
     }
   ]
 }
