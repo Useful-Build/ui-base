@@ -404,6 +404,301 @@
       ]
     },
     {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "Collapsible, unstyled: Radix Collapsible with data-slot attributes. The content unmounts while closed.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/collapsible.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "Hover Card, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/hover-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "Scroll Area",
+      "description": "Scroll Area, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Tabs, restyled with the role tokens: the default list looks like the segmented control, or a line under the active tab.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "Progress, restyled with the role tokens.",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/progress.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "Spinner: the progress_activity icon, spinning, in a status region with an accessible label.",
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/spinner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "title": "Item",
+      "description": "Item, a list row with media, content and actions, restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/separator"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/item.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input-group",
+      "type": "registry:ui",
+      "title": "Input Group",
+      "description": "Input Group, an input or textarea with addons and buttons, restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/button",
+        "Useful-Build/ui-base/input",
+        "Useful-Build/ui-base/textarea"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/input-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "type": "registry:ui",
+      "title": "Message",
+      "description": "Message, the layout of one chat message (avatar, header, content, footer), restyled with the role tokens.",
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/message.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "bubble",
+      "type": "registry:ui",
+      "title": "Bubble",
+      "description": "Bubble, a chat bubble, restyled with the role tokens. The default variant is the person's own message.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/bubble.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "marker",
+      "type": "registry:ui",
+      "title": "Marker",
+      "description": "Marker, a line in a thread (a time, a model switch), restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/marker.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "attachment",
+      "type": "registry:ui",
+      "title": "Attachment",
+      "description": "Attachment, a file chip with upload states, restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/button"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/attachment.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "message-scroller",
+      "type": "registry:ui",
+      "title": "Message Scroller",
+      "description": "Message Scroller, a chat scroll container that anchors turns and follows the live edge (@shadcn/react), restyled with the role tokens.",
+      "dependencies": [
+        "@shadcn/react@0.3.1"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/button",
+        "Useful-Build/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/message-scroller.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "trace",
+      "type": "registry:ui",
+      "title": "Trace",
+      "description": "Trace, rows of an agent's steps with nested, collapsible detail, restyled with the role tokens.",
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/collapsible",
+        "Useful-Build/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/trace.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "Code Block",
+      "description": "Code Block, plain text with a copy button, line numbers and diff lines (no syntax highlighting), restyled with the role tokens.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/button",
+        "Useful-Build/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/code-block.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "questionnaire",
+      "type": "registry:ui",
+      "title": "Questionnaire",
+      "description": "Questionnaire, a step-by-step set of questions with choices (@shadcn/react), restyled with the role tokens.",
+      "dependencies": [
+        "@shadcn/react@0.3.1"
+      ],
+      "registryDependencies": [
+        "Useful-Build/ui-base/utils",
+        "Useful-Build/ui-base/button",
+        "Useful-Build/ui-base/icon"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/questionnaire.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "tokens",
       "type": "registry:item",
       "title": "ui-base.css (Vite)",
@@ -540,7 +835,8 @@
         "cmdk",
         "tw-animate-css",
         "@fontsource-variable/geist",
-        "@fontsource-variable/geist-mono"
+        "@fontsource-variable/geist-mono",
+        "@shadcn/react@0.3.1"
       ],
       "files": [
         {
@@ -639,6 +935,70 @@
         },
         {
           "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/collapsible.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/hover-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tabs.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/progress.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/spinner.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/item.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/bubble.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/marker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/attachment.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message-scroller.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/trace.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/code-block.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/questionnaire.tsx",
           "type": "registry:ui"
         },
         {
@@ -681,7 +1041,8 @@
         "radix-ui",
         "class-variance-authority",
         "cmdk",
-        "tw-animate-css"
+        "tw-animate-css",
+        "@shadcn/react@0.3.1"
       ],
       "files": [
         {
@@ -780,6 +1141,70 @@
         },
         {
           "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/collapsible.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/hover-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tabs.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/progress.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/spinner.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/item.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/bubble.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/marker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/attachment.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message-scroller.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/trace.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/code-block.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/questionnaire.tsx",
           "type": "registry:ui"
         },
         {
@@ -824,7 +1249,8 @@
         "cmdk",
         "tw-animate-css",
         "@fontsource-variable/geist",
-        "@fontsource-variable/geist-mono"
+        "@fontsource-variable/geist-mono",
+        "@shadcn/react@0.3.1"
       ],
       "files": [
         {
@@ -914,6 +1340,70 @@
         },
         {
           "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/collapsible.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/hover-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tabs.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/progress.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/spinner.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/item.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/bubble.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/marker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/attachment.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message-scroller.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/trace.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/code-block.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/questionnaire.tsx",
           "type": "registry:ui"
         },
         {
@@ -946,7 +1436,8 @@
         "radix-ui",
         "class-variance-authority",
         "cmdk",
-        "tw-animate-css"
+        "tw-animate-css",
+        "@shadcn/react@0.3.1"
       ],
       "files": [
         {
@@ -1036,6 +1527,70 @@
         },
         {
           "path": "registry/ui/tooltip.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/collapsible.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/hover-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/tabs.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/progress.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/spinner.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/item.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/input-group.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/bubble.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/marker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/attachment.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/message-scroller.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/trace.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/code-block.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/questionnaire.tsx",
           "type": "registry:ui"
         },
         {
