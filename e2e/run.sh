@@ -84,6 +84,22 @@ must() { step "$@" || exit 1; }
 # lacks <text> <file>: the file exists and doesn't contain the text.
 lacks() { [ -f "$2" ] && ! grep -qF -- "$1" "$2"; }
 
+# replace_icon_set: run in an app dir with $icon_tsx set. The app swaps lucide-react for its own glyphs (a local module
+# exporting the same names), keeping icon.tsx's props and its `satisfies Record<IconName, ...>` map.
+replace_icon_set() {
+  local glyphs names
+  glyphs="$(dirname "$icon_tsx")/app-glyphs.tsx"
+  names=$(perl -0ne 'print $1 if /import \{([^}]*)\} from "lucide-react"/' "$icon_tsx" | tr ',' '\n' | sed -E 's/^[[:space:]]+|[[:space:]]+$//' | grep -E '^[A-Z]' | tr '\n' ' ')
+  [ -n "$names" ] || abort "$kind-replace-icon-set" "no lucide-react import found in $icon_tsx"
+  {
+    echo 'import type { JSX, SVGProps } from "react"'
+    echo 'export type LucideIcon = (props: SVGProps<SVGSVGElement> & { size?: number }) => JSX.Element'
+    echo 'const Glyph: LucideIcon = ({ size = 24, ...props }) => <svg width={size} height={size} viewBox="0 0 24 24" stroke="currentColor" {...props}><circle cx="12" cy="12" r="7" /></svg>'
+    for n in $names; do echo "export const $n = Glyph"; done
+  } > "$glyphs"
+  perl -0pi -e 's#from "lucide-react"#from "\@/components/ui/app-glyphs"#' "$icon_tsx"
+  lacks lucide-react "$icon_tsx" || abort "$kind-replace-icon-set" "icon.tsx still imports lucide-react"
+}
 # copy_shots <dest>: the visual baselines, which must exist.
 copy_shots() {
   local dest="$1" shots
@@ -191,6 +207,17 @@ app() {
   perl -0pi -e "s#AXE_EXCLUDE: Exclusion\[\] = \[\]#AXE_EXCLUDE: Exclusion[] = [{ rule: 'color-contrast', selector: '[data-app-excluded]', why: 'e2e app exclusion' }]#; s#MASKS: string\[\] = \[\]#MASKS: string[] = ['h1']#" e2e/ui/routes.ts
   grep -qF "[data-app-excluded]" e2e/ui/routes.ts && grep -qF "MASKS: string[] = ['h1']" e2e/ui/routes.ts \
     || abort "$kind-add-app-exclusion" "exclusion and mask edit did not apply to e2e/ui/routes.ts"
+  # The app replaces its icon set (icon.tsx stops importing lucide-react) and, in Vite, its fonts (the starter's fontsource
+  # imports go), and uninstalls those packages. The update must not bring them back. Done before the baselines below are
+  # written, so the post-update suite compares against this look.
+  replace_icon_set
+  step "$kind-uninstall-lucide" pass npm uninstall lucide-react
+  if [ "$kind" = vite ]; then
+    perl -0pi -e 's#\@import "\@fontsource-variable/geist(-mono)?";\n##g' "$app_css"
+    lacks fontsource "$app_css" || abort "$kind-drop-fonts" "fontsource imports still in $app_css"
+    step "$kind-uninstall-fontsource" pass npm uninstall @fontsource-variable/geist @fontsource-variable/geist-mono
+  fi
+  step "$kind-replaced-icons-and-fonts-build" pass npm run build
   # From here the suite reads the app's own routes.ts.
   unset UI_ROUTES
   mv e2e/ui/visual.spec.ts-snapshots "$WORK/$kind-snapshots-base" || abort "$kind-move-baselines" "cannot move the first baselines aside"
@@ -226,6 +253,8 @@ EOT
   echo '// stale' >> e2e/ui/visual.spec.ts
   for f in "$ui_dir/button.tsx" scripts/check-tokens.mjs "$lib_utils" "$icon_names"; do echo '// stale' >> "$f"; done
   must "$kind-add-$update_item" pass "${SHADCN[@]}" add "$REPO/$update_item#$REF" -y --overwrite
+  step "$kind-update-kept-lucide-out" pass lacks lucide-react package.json
+  step "$kind-update-kept-fontsource-out" pass lacks fontsource package.json
   must "$kind-add-regression-suite-update" pass "${SHADCN[@]}" add "$REPO/regression-suite-update#$REF" -y --overwrite
   step "$kind-update-kept-app-css" pass cmp "$WORK/app-css.keep" "$app_css"
   step "$kind-update-kept-routes" pass cmp "$WORK/routes.keep" e2e/ui/routes.ts
@@ -267,12 +296,18 @@ EOT
 # App-owned files: installed once by the first-install items, never shipped by an update item.
 APP_OWNED="registry/ui/icon.tsx,registry/lib/merge-config.ts,registry/styles/app.css,registry/styles/app-next.css,registry/scripts/check-tokens.allow.json,registry/regression/e2e/ui/routes.ts"
 
-# Each update item must be its first-install item minus the app-owned files, with the same dependencies.
+# Packages only app-owned files use: the icon seam's lucide-react and the Vite starter's Geist fonts. The first-install
+# items install them; an update item never does, so an app that replaced its icon set or fonts doesn't get them back.
+APP_OWNED_DEPS="lucide-react,@fontsource-variable/geist,@fontsource-variable/geist-mono"
+
+# Each update item must be its first-install item minus the app-owned files, with the same dependencies minus the
+# app-owned packages, and no file it ships may import one of those packages.
 bundles_consistent() {
   node -e '
     const fs = require("fs")
     const reg = JSON.parse(fs.readFileSync(process.argv[1], "utf8"))
     const appOwned = new Set(process.argv[2].split(","))
+    const appDeps = new Set(process.argv[3].split(","))
     const items = Object.fromEntries(reg.items.map(i => [i.name, i]))
     const key = f => JSON.stringify([f.path, f.type, f.target ?? null])
     let bad = 0
@@ -286,15 +321,20 @@ bundles_consistent() {
       for (const k of have) if (!want.includes(k)) fail(`${update} ships ${k}, which is app-owned or not in ${first}`)
       if (new Set(have).size !== have.length) fail(`${update} lists a file twice`)
       for (const field of ["dependencies", "devDependencies"]) {
-        const x = [...(a[field] ?? [])].sort().join(" "), y = [...(b[field] ?? [])].sort().join(" ")
-        if (x !== y) fail(`${field} differ: ${first} [${x}], ${update} [${y}]`)
+        const x = (a[field] ?? []).filter(d => !appDeps.has(d)).sort().join(" "), y = [...(b[field] ?? [])].sort().join(" ")
+        if (x !== y) fail(`${field} differ: ${first} minus app-owned packages [${x}], ${update} [${y}]`)
+      }
+      for (const f of b.files) {
+        const src = fs.readFileSync(f.path, "utf8")
+        // The package name in either quote (a single quote would end this shell string, so it is char code 39).
+        for (const d of appDeps) for (const q of ["\"", String.fromCharCode(39)]) if (src.includes(q + d + q)) fail(`${update} ships ${f.path}, which imports ${d} (app-owned)`)
       }
       const owned = a.files.filter(f => appOwned.has(f.path)).map(f => f.path)
       console.log(`${first} -> ${update}: ${have.length} files, app-owned left out: ${owned.join(", ") || "none"}`)
     }
     if (bad) { console.error(`${bad} difference(s) between the first-install and update items`); process.exit(1) }
     console.log("bundles consistent")
-  ' "$ROOT/registry.json" "$APP_OWNED"
+  ' "$ROOT/registry.json" "$APP_OWNED" "$APP_OWNED_DEPS"
 }
 
 # The token check against small fixtures: comments, var() exemptions and the lines that must still be flagged.

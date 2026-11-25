@@ -1239,17 +1239,14 @@
       "name": "update",
       "type": "registry:item",
       "title": "UI base update (Vite)",
-      "description": "Updates a Vite app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: src/index.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json.",
+      "description": "Updates a Vite app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: src/index.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Installs no package that only an app-owned file uses (lucide-react for icon.tsx, the Geist fontsource packages for src/index.css), so an app that replaced its icon set or fonts doesn't get them back.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
-        "lucide-react",
         "radix-ui",
         "class-variance-authority",
         "cmdk",
         "tw-animate-css",
-        "@fontsource-variable/geist",
-        "@fontsource-variable/geist-mono",
         "@shadcn/react@0.3.1"
       ],
       "files": [
@@ -1428,11 +1425,10 @@
       "name": "update-next",
       "type": "registry:item",
       "title": "UI base update (Next.js)",
-      "description": "Updates a Next.js app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: app/globals.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json.",
+      "description": "Updates a Next.js app: ui-base.css, components, icon names, utils, token check and the guide. Leaves the app-owned files alone: app/globals.css, components/ui/icon.tsx, lib/merge-config.ts and scripts/check-tokens.allow.json. Installs no package that only an app-owned file uses (lucide-react for icon.tsx), so an app that replaced its icon set doesn't get it back.",
       "dependencies": [
         "clsx",
         "tailwind-merge",
-        "lucide-react",
         "radix-ui",
         "class-variance-authority",
         "cmdk",

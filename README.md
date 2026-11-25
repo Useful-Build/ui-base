@@ -57,7 +57,7 @@ The app CSS starter is frozen: a release never changes it, since every app owns 
 | Item | When | What it installs |
 |---|---|---|
 | `base`, `base-next` | first install | Everything below for Vite or Next.js, including the app CSS starter, except the regression suite |
-| `update`, `update-next` | updates | The same, minus the app-owned files: the app CSS starter, `icon.tsx`, `lib/merge-config.ts` and `check-tokens.allow.json` |
+| `update`, `update-next` | updates | The same, minus the app-owned files (the app CSS starter, `icon.tsx`, `lib/merge-config.ts` and `check-tokens.allow.json`) and the packages only they use (`lucide-react`, and in Vite `@fontsource-variable/geist` and `geist-mono`) |
 | `regression-suite` | first install | `playwright.ui.config.ts` and `e2e/ui/` (visual and axe, light and dark, desktop and phone), including `routes.ts` |
 | `regression-suite-update` | updates | The same, minus `routes.ts` |
 | `tokens`, `tokens-next` | | `ui-base.css` alone, at `src/ui-base.css` or `app/ui-base.css` |
@@ -95,7 +95,7 @@ npx shadcn@4.23.0 add Useful-Build/ui-base/update-next -y --overwrite           
 npx shadcn@4.23.0 add Useful-Build/ui-base/regression-suite-update -y --overwrite   # if the app has the suite
 ```
 
-They rewrite the base-owned files and leave the app-owned ones alone: the app CSS file, `components/ui/icon.tsx`, `lib/merge-config.ts`, `scripts/check-tokens.allow.json` and `routes.ts`. Read [CHANGELOG.md](CHANGELOG.md) for the release: it lists new icon names, new or deprecated tokens and anything app-owned you must touch. A new icon name lands in `icon-names.ts`, and your `icon.tsx` maps names with `satisfies Record<IconName, ...>`, so the type check fails right after the update until you map it. Then run the type check and `lint:tokens` and review the diff before committing. Pin a release with a tag or a full commit SHA: `Useful-Build/ui-base/update#v1.0.0`. The `base`, `update` and suite items (and their Next.js twins) carry all their files themselves, so a pinned ref installs exactly that version. Single component items depend on `utils`, `icon` and so on through `registryDependencies`, and the CLI resolves those from `main` whatever ref you pin (refs are not passed on to dependencies).
+They rewrite the base-owned files and leave the app-owned ones alone: the app CSS file, `components/ui/icon.tsx`, `lib/merge-config.ts`, `scripts/check-tokens.allow.json` and `routes.ts`. They don't install `lucide-react` or the Geist fontsource packages either: only the app-owned `icon.tsx` and app CSS file use them, so an app that replaced its icon set or fonts and uninstalled them doesn't get them back. Read [CHANGELOG.md](CHANGELOG.md) for the release: it lists new icon names, new or deprecated tokens and anything app-owned you must touch. A new icon name lands in `icon-names.ts`, and your `icon.tsx` maps names with `satisfies Record<IconName, ...>`, so the type check fails right after the update until you map it. Then run the type check and `lint:tokens` and review the diff before committing. Pin a release with a tag or a full commit SHA: `Useful-Build/ui-base/update#v1.0.0`. The `base`, `update` and suite items (and their Next.js twins) carry all their files themselves, so a pinned ref installs exactly that version. Single component items depend on `utils`, `icon` and so on through `registryDependencies`, and the CLI resolves those from `main` whatever ref you pin (refs are not passed on to dependencies).
 
 ## Restyling an app
 
