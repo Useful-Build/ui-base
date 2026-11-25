@@ -13,6 +13,11 @@ Rules every release follows:
 - **App-owned files never ship in an update item.** Anything an app is told to edit is installed once by `base`, `base-next` or `regression-suite`.
 - **Newly adopted components are named here.** A component an app added from upstream shadcn is the app's own until ui-base adopts it. The release that adopts one names it, since the update then rewrites the app's copy: review that file's diff.
 
+## v2.0.1 (2026-11-25)
+
+- **Update items install fewer packages:** `update` no longer installs `lucide-react`, `@fontsource-variable/geist` or `@fontsource-variable/geist-mono`, and `update-next` no longer installs `lucide-react`. Only app-owned files use them (`icon.tsx`, and the Vite app CSS file), so an app that replaced its icon set or fonts got them back on every update. `base` and `base-next` still install them. An app that still uses them keeps them: an update never uninstalls a package.
+- **Icon names, tokens, app-owned files to touch:** none.
+
 ## v2.0.0 (2026-11-25)
 
 Chat and agent components from shadcn/ui, restyled with the role tokens. Major because of the new icon names below: the app's type check fails until it maps them.
