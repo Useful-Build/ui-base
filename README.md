@@ -1,6 +1,6 @@
 # ui-base
 
-The shared UI base for every new app, Next.js or Vite: a token file, an app CSS starter, 20 restyled shadcn/ui components (Radix base, Tailwind v4), an icon seam, a token check, a design system guide and a Playwright regression suite. It's a public shadcn [GitHub registry](https://ui.shadcn.com/docs/registry/github): `registry.json` at the root lists every item, and the sources live in `registry/`. Inhouse is the reference app.
+The shared UI base for every new app, Next.js or Vite: a token file, an app CSS starter, 36 restyled shadcn/ui components (Radix base, Tailwind v4, including the chat and agent components), an icon seam, a token check, a design system guide and a Playwright regression suite. It's a public shadcn [GitHub registry](https://ui.shadcn.com/docs/registry/github): `registry.json` at the root lists every item, and the sources live in `registry/`. Inhouse is the reference app.
 
 ## Install
 
@@ -63,11 +63,11 @@ The app CSS starter is frozen: a release never changes it, since every app owns 
 | `tokens`, `tokens-next` | | `ui-base.css` alone, at `src/ui-base.css` or `app/ui-base.css` |
 | `utils` | | `lib/utils.ts`: `cn()` with tailwind-merge taught the token scales. It imports `lib/merge-config.ts`, which only `base` and `base-next` install |
 | `icon` | | `components/ui/icon.tsx`, the icon seam (lucide-react), and `components/ui/icon-names.ts` |
-| `avatar` `badge` `button` `card` `checkbox` `command` `dialog` `dropdown-menu` `input` `label` `popover` `select` `separator` `sheet` `skeleton` `switch` `textarea` `toggle` `toggle-group` `tooltip` | | One component each, in `components/ui/` |
-| `token-check` | | `scripts/check-tokens.mjs` (create `scripts/check-tokens.allow.json` yourself if you need it) |
+| `attachment` `avatar` `badge` `bubble` `button` `card` `checkbox` `code-block` `collapsible` `command` `dialog` `dropdown-menu` `hover-card` `input` `input-group` `item` `label` `marker` `message` `message-scroller` `popover` `progress` `questionnaire` `scroll-area` `select` `separator` `sheet` `skeleton` `spinner` `switch` `tabs` `textarea` `toggle` `toggle-group` `tooltip` `trace` | | One component each, in `components/ui/` |
+| `token-check` | | `scripts/check-tokens.mjs`: color literals, unknown token overrides and `cn` package imports in `components/ui/` (create `scripts/check-tokens.allow.json` yourself if you need it) |
 | `guide` | | `DESIGN_SYSTEM.md` |
 
-Single items install the same way: `npx shadcn@4.23.0 add Useful-Build/ui-base/dialog`. A single component item doesn't bring `ui-base.css` or the app CSS file, so install `base` or `base-next` first; without them the component's classes have no tokens. Don't add a single component item with `--overwrite` to an app that has the base: the items that render `Icon` (`checkbox`, `command`, `dialog`, `dropdown-menu`, `select` and `sheet`) pull in `icon` through `registryDependencies`, and `--overwrite` then replaces the app-owned `icon.tsx` too. Add single items without `--overwrite`, or update through the update items.
+Single items install the same way: `npx shadcn@4.23.0 add Useful-Build/ui-base/dialog`. A single component item doesn't bring `ui-base.css` or the app CSS file, so install `base` or `base-next` first; without them the component's classes have no tokens. Don't add a single component item with `--overwrite` to an app that has the base: the items that render `Icon` (`checkbox`, `code-block`, `command`, `dialog`, `dropdown-menu`, `message-scroller`, `questionnaire`, `select`, `sheet`, `spinner` and `trace`) pull in `icon` through `registryDependencies`, and `--overwrite` then replaces the app-owned `icon.tsx` too. Add single items without `--overwrite`, or update through the update items.
 
 A single component or `utils` added to an app that never installed `base` or `base-next` needs `lib/merge-config.ts` added by hand, because `utils` imports it and no single item ships it. Create it (`src/lib/merge-config.ts` for Vite, `lib/merge-config.ts` for Next.js) with this content:
 

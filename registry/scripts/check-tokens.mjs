@@ -2,12 +2,13 @@
 // that imports it and overrides tokens (src/index.css in a Vite app, app/globals.css in a Next app).
 // It also fails when the app CSS file's :root or .dark blocks set a --name that ui-base.css doesn't define (a renamed
 // or mistyped token would otherwise do nothing). App-only tokens start with --app- and are always fine.
+// And it fails when a file in components/ui imports cn from the "cn" package instead of @/lib/utils (see CN_IMPORT).
 // Run from the project root: node scripts/check-tokens.mjs <dir> [dir...]   e.g. `src`, or `app components lib`.
 // Owned by ui-base: `add update` rewrites this file, so don't edit it. To allow content art that is a picture rather
 // than UI (file previews, canvas drawings), list its path, relative to the project root, in the app's own
 // scripts/check-tokens.allow.json (a JSON array of paths), which updates leave alone.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
-import { dirname, join, relative } from 'node:path'
+import { dirname, join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 // The app CSS file, wherever the framework puts it. With ui-base.css, the only files allowed to hold color values.
@@ -251,6 +252,12 @@ const overrides = css => cssDecls(css).filter(d => d.name.startsWith('--') && is
 const definedIn = css => new Set(cssDecls(css)
   .filter(d => d.name.startsWith('--') && (isOverrideBlock(d.block) || d.block === '@theme static')).map(d => d.name))
 
+// Components in components/ui take cn() from @/lib/utils, which teaches tailwind-merge the token scales. Upstream shadcn
+// components import the plain one from the "cn" package, which drops a class next to one of ours (text-md and
+// text-sm read as a color and a size), so a component pulled in with `npx shadcn add` must have its import rewritten.
+const CN_IMPORT = /\bfrom\s*(['"])cn\1/g
+const inComponentsUi = rel => /(^|\/)components\/ui\//.test(rel.split(sep).join('/'))
+
 const within = ranges => i => ranges.some(([a, b]) => i >= a && i < b)
 
 // Every color literal in one file's comment-stripped text: [index, what].
@@ -308,8 +315,14 @@ for (const file of dirs.flatMap(d => walk(d))) {
       }
     }
   }
-  if (ALLOWED.has(rel)) continue
   const lines = text.split('\n')
+  if (mode === 'js' && inComponentsUi(rel)) {
+    for (const m of text.matchAll(CN_IMPORT)) {
+      const n = text.slice(0, m.index).split('\n').length
+      hits.push(`${rel}:${n}  from "cn"  components/ui must import cn from @/lib/utils, not the cn package: ${lines[n - 1].trim().slice(0, 100)}`)
+    }
+  }
+  if (ALLOWED.has(rel)) continue
   for (const [i, what] of literals(text, mode)) {
     const n = text.slice(0, i).split('\n').length
     hits.push(`${rel}:${n}  ${what.trim()}  ${lines[n - 1].trim().slice(0, 100)}`)
@@ -317,8 +330,8 @@ for (const file of dirs.flatMap(d => walk(d))) {
 }
 
 if (hits.length) {
-  console.error(`${hits.length} problem(s): a color literal outside the token files, or an override of a token ui-base.css doesn't define. Use a token class (bg-card, text-foreground-3, border-border...) or add a token:\n`)
+  console.error(`${hits.length} problem(s): a color literal outside the token files, an override of a token ui-base.css doesn't define, or a components/ui file importing the cn package. Use a token class (bg-card, text-foreground-3, border-border...) or add a token, and import cn from @/lib/utils:\n`)
   console.error(hits.join('\n'))
   process.exit(1)
 }
-console.log(`tokens: no color literals outside the token files (checked ${dirs.join(', ')})`)
+console.log(`tokens: no color literals outside the token files and no cn package imports in components/ui (checked ${dirs.join(', ')})`)

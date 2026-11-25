@@ -16,7 +16,7 @@ REF="${1:-$(git -C "$ROOT" rev-parse HEAD)}"
 SHADCN=(npx -y shadcn@4.23.0)
 VERIFY="${VERIFY_DIR:-$ROOT/verify/e2e}"
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/ui-base-e2e.XXXXXX")"
-ROUTES="/,/?open=dialog,/?open=dropdown,/?open=select,/?open=popover,/?open=tooltip,/?open=sheet,/?open=command"
+ROUTES="/,/?open=dialog,/?open=dropdown,/?open=select,/?open=popover,/?open=tooltip,/?open=sheet,/?open=command,/?open=hover-card"
 export UI_ROUTES="$ROUTES" CI=1
 
 # The brand an app sets in its own CSS file for the update-path check.
@@ -340,6 +340,10 @@ token_check_fixtures() {
   flags percent-color fail-percent 'p\.css:2  color\( '
   flags percent-hsl fail-percent 'p\.css:3  hsl\( '
   flags markup-mid-line-slashes fail-markup-code 'v\.vue:2  #abcdef '
+  # components/ui imports cn from @/lib/utils, never the cn package; elsewhere the import is not this check's business.
+  flags cn-import-double fail-cn-import 'components/ui/double\.tsx:2  from "cn" '
+  flags cn-import-single fail-cn-import "components/ui/single\.tsx:1  from \"cn\" "
+  STEP_REASON='^2 problem' step "token-check-flags-cn-import-only-in-components-ui" fail node "$check" fail-cn-import
   # @theme inline outputs are not overridable tokens.
   STEP_REASON='src/index\.css:3  --color-card  is not defined in ui-base\.css' \
     step "token-check-flags-theme-inline-override" fail sh -c "cd app-fail-theme-inline && node '$check' src"

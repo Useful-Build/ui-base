@@ -1,9 +1,12 @@
 export const ICON_NAMES = [
+  "arrow_downward",
   "check",
   "chevron_right",
   "close",
+  "content_copy",
   "expand_less",
   "expand_more",
+  "progress_activity",
   "search",
   "unfold_more",
 ] as const

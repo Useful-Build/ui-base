@@ -23,6 +23,8 @@ const buttonVariants = cva(
         xs: "h-5.5 gap-0.75 rounded-full pr-2.25 pl-1.5 text-xs",
         sm: "h-7 gap-1 px-2.5 text-xs",
         lg: "h-9.5 rounded-lg px-[15px] text-base",
+        // A 24px square, for an action inside a small control (an attachment, a code block).
+        "icon-xs": "size-6 rounded-md",
         icon: "size-8 rounded-lg",
         "icon-sm": "size-7 rounded-lg",
         "icon-lg": "size-9 rounded-lg",
@@ -34,7 +36,7 @@ const buttonVariants = cva(
       // A link is text: no box.
       { variant: "link", class: "h-auto px-0" },
       // Ghost icon buttons: a soft square on hover, the glyph keeps its color.
-      { variant: "ghost", size: ["icon", "icon-sm", "icon-lg"], class: "text-foreground-3 hover:bg-foreground/5 hover:text-foreground-3" },
+      { variant: "ghost", size: ["icon-xs", "icon", "icon-sm", "icon-lg"], class: "text-foreground-3 hover:bg-foreground/5 hover:text-foreground-3" },
     ],
     defaultVariants: {
       variant: "default",

@@ -1,10 +1,13 @@
 import type { CSSProperties } from "react"
 import {
+  ArrowDown,
   Check,
   ChevronDown,
   ChevronRight,
   ChevronUp,
   ChevronsUpDown,
+  Copy,
+  LoaderCircle,
   Search,
   X,
   type LucideIcon,
@@ -17,11 +20,14 @@ import { cn } from "@/lib/utils"
 // replace only this file and keep the same props. Keep the `satisfies Record<IconName, ...>` check: when a release
 // adds a name to icon-names.ts, the type check then fails here until the new name is mapped.
 const ICONS = {
+  arrow_downward: ArrowDown,
   check: Check,
   chevron_right: ChevronRight,
   close: X,
+  content_copy: Copy,
   expand_less: ChevronUp,
   expand_more: ChevronDown,
+  progress_activity: LoaderCircle,
   search: Search,
   unfold_more: ChevronsUpDown,
 } satisfies Record<IconName, LucideIcon>
